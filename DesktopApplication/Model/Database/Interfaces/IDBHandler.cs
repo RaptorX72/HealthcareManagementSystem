@@ -1,4 +1,4 @@
-﻿namespace DesktopApplication.Model.Database.Interfaces {
+﻿namespace DesktopApplication.Model.Database {
     public interface IDBHandler {
         public static IDBHandler? Instance { get; }
 

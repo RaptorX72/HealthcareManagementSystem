@@ -1,7 +1,7 @@
 ﻿using DesktopApplication.Model.Healthcare;
 using DesktopApplication.Model.Management;
 
-namespace DesktopApplication.Model.Database.Interfaces {
+namespace DesktopApplication.Model.Database {
     public interface IDBHandlerMedicalRecord {
         public List<MedicalRecord> GetAllMedicalRecords();
 
