@@ -18,6 +18,7 @@ namespace DesktopApplication.Model {
     }
 
     public enum SurgeryOutcome {
+        NotPerformed,
         Success,
         PartialSuccess,
         Failed

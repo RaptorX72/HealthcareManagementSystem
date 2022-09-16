@@ -9,10 +9,11 @@
 
         public string LastName { get; }
 
-        public int SpecialityId { get; }
+        public Guid SpecialityId { get; }
         #endregion
+
         #region constructors
-        public Doctor(Guid id, string firstName, string middleName, string lastName, int specialityId) {
+        public Doctor(Guid id, string firstName, string middleName, string lastName, Guid specialityId) {
             Id = id;
             FirstName = firstName;
             MiddleName = middleName;

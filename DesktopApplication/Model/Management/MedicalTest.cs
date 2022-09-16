@@ -9,8 +9,9 @@
 
         public MedicalTestType MedicalTestType { get; }
 
-        public MedicalTestResult Result { get; }
+        public MedicalTestResult? Result { get; }
         #endregion
+
         #region constructors
         public MedicalTest(Guid id, Guid doctorId, Guid patientId, MedicalTestType medicalTestType, MedicalTestResult result) {
             Id = id;
@@ -26,15 +27,19 @@
         #region fields
         public Guid Id { get; }
 
+        public Guid MedicalTestId { get; }
+
         public string Note { get; }
 
-        public List<Image>? attachments { get; }
+        public List<Image>? Attachments { get; }
         #endregion
         #region constructors
-        public MedicalTestResult(Guid id, string note, List<Image>? attachments) {
+        public MedicalTestResult(Guid id, Guid medicalTestId,  string note, List<Image>? attachments) {
             Id = id;
+            MedicalTestId = medicalTestId;
             Note = note;
-            this.attachments = attachments;
+            Attachments = attachments;
+            MedicalTestId = medicalTestId;
         }
         #endregion
     }

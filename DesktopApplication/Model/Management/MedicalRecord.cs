@@ -17,15 +17,16 @@ namespace DesktopApplication.Model.Management {
 
         public double Weight { get; }
 
-        public List<Medication> Medications { get; }
+        public List<Perscription> Perscriptions { get; }
 
         public List<MedicalNote> Notes { get; }
         #endregion
+
         #region constructors
         public MedicalRecord(
             Guid id, Guid patientId, DateTime birthDate,
             string gender, BloodType bloodType, double height,
-            double weight, List<Medication> medications, List<MedicalNote> notes
+            double weight, List<Perscription> perscriptions, List<MedicalNote> notes
             ) {
             Id = id;
             PatientId = patientId;
@@ -34,7 +35,7 @@ namespace DesktopApplication.Model.Management {
             BloodType = bloodType;
             Height = height;
             Weight = weight;
-            Medications = medications;
+            Perscriptions = perscriptions;
             Notes = notes;
         }
         #endregion
