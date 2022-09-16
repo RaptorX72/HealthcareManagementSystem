@@ -15,6 +15,7 @@
 
         public SurgeryOutcome Outcome { get; }
         #endregion
+
         #region constructors
         public Surgery(
             Guid id, Guid appointerDoctorId, Guid surgeonDoctorId, Guid patientId,

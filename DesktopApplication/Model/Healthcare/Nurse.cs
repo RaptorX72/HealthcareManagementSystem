@@ -9,6 +9,7 @@
 
         public string LastName { get; }
         #endregion
+
         #region constructors
         public Nurse(Guid id, string firstName, string middleName, string lastName) {
             Id = id;

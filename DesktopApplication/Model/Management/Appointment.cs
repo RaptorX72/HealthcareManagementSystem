@@ -11,6 +11,7 @@
 
         public string Notes { get; }
         #endregion
+
         #region constructors
         public Appointment(Guid id, DateTime date, Guid doctorId, Guid patientId, string notes) {
             Id = id;

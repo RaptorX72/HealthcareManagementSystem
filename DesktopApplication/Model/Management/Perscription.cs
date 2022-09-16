@@ -12,6 +12,7 @@ namespace DesktopApplication.Model.Management {
 
         public string Note { get; }
         #endregion
+
         #region constructors
         public Perscription(Guid id, Guid patientId, Guid doctorId, Medication medication, string note) {
             Id = id;

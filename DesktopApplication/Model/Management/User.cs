@@ -11,6 +11,7 @@
 
         public string Password { get; }
         #endregion
+
         #region constructors
         public User(Guid id, string username, string email, string salt, string password) {
             Id = id;

@@ -13,6 +13,7 @@
 
         public UnitOfMeasurement UnitOfMeasurement { get; }
         #endregion
+
         #region constructors
         public Medication(Guid id, string name, string mainIngedient, double dosage, double size, UnitOfMeasurement unitOfMeasurement) {
             Id = id;
