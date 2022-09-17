@@ -17,7 +17,7 @@ namespace DesktopApplication.Model.Database {
 
         public MySQLDBHandler(DBConnectionInfo info) {
             con.ConnectionString = $"server={info.address};uid={info.username};pwd={info.password};database={info.databaseName}";
-            Task.Run(() => { Setup(info); });
+            //Task.Run(() => { Setup(info); });
             appointmentDb = new MySQLDBHAppointment(con);
             doctorDb = new MySQLDBHDoctor(con);
             medicalNoteDb = new MySQLDBHMedicalNote(con);

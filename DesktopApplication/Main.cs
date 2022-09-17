@@ -7,17 +7,17 @@ namespace DesktopApplication {
     public partial class Main : Form {
         public Main() {
             InitializeComponent();
-            /*DBConnectionInfo info = new DBConnectionInfo() {
+            //Dummy code for testing
+            DBConnectionInfo info = new DBConnectionInfo() {
                 address = "localhost",
                 username = "root",
                 password = "",
                 databaseName = "testdb"
             };
             DBHandler.SetDataBaseType(DataBaseType.MySQL, info);
-            Appointment ap = new Appointment(
-                Guid.Empty, DateTime.Now, Guid.Empty, Guid.Empty, "notes"
-            );
-            DBHandler.DB.Appointment().AddAppointment(ap);*/
+            User newUser = new User("foobar", "foobar@email.com", "1234");
+            newUser = DBHandler.DB.User().AddUser(newUser);
+            MessageBox.Show(newUser.Password);
         }
     }
 }
