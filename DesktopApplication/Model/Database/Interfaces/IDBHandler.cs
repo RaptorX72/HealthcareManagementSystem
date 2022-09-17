@@ -1,25 +1,23 @@
 ﻿namespace DesktopApplication.Model.Database {
     public interface IDBHandler {
-        public static IDBHandler? Instance { get; }
+        public DBHAppointment Appointment();
 
-        public static IDBHandlerAppointment? Appointment { get; }
+        public DBHDoctor Doctor();
 
-        public static IDBHandlerDoctor? Doctor { get; }
+        public DBHMedicalNote MedicalNote();
 
-        public static IDBHandlerMedicalNote? MedicalNote { get; }
+        public DBHMedicalRecord MedicalRecord();
 
-        public static IDBHandlerMedicalRecord? MedicalRecord { get; }
+        public DBHMedicalTest MedicalTest();
 
-        public static IDBHandlerMedicalTest? MedicalTest { get; }
+        public DBHMedication Medication();
 
-        public static IDBHandlerMedication? Medication { get; }
+        public DBHPatient Patient();
 
-        public static IDBHandlerPatient? Patient { get; }
+        public DBHPerscription Perscription();
 
-        public static IDBHandlerPerscription? Perscription { get; }
+        public DBHSurgery Surgery();
 
-        public static IDBHandlerSurgery? Surgery { get; }
-
-        public static IDBHandlerUser? User { get; }
+        public DBHUser User();
     }
 }
