@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace DesktopApplication.Model {
+    public enum DataBaseType {
+        MySQL,
+        SQLServer,
+        SQLite
+    }
 
-namespace DesktopApplication.Model {
     public enum BloodAntigen {
         A,
         B,
