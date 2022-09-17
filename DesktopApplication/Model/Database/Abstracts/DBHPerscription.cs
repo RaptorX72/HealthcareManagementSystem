@@ -3,6 +3,7 @@ using DesktopApplication.Model.Management;
 
 namespace DesktopApplication.Model.Database {
     public abstract class DBHPerscription : IDBHandlerPerscription {
+        public abstract Perscription AddPerscription(Perscription perscription);
         public abstract void DeleteAllPerscriptionsByDoctor(Doctor doctor);
         public abstract void DeleteAllPerscriptionsByDoctorId(Guid doctorId);
         public abstract void DeleteAllPerscriptionsByPatient(Patient patient);

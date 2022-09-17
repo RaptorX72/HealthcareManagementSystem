@@ -3,6 +3,8 @@ using DesktopApplication.Model.Management;
 
 namespace DesktopApplication.Model.Database {
     public interface IDBHandlerSurgery {
+        public Surgery AddSurgery(Surgery surgery);
+
         public List<Surgery> GetAllSurgeries();
 
         public Surgery GetSurgeryById(Guid surgeryId);

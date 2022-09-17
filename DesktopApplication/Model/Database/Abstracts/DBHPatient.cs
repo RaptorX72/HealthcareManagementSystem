@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace DesktopApplication.Model.Database {
     public abstract class DBHPatient : IDBHandlerPatient {
+        public abstract Patient AddPatient(Patient patient);
         public abstract void DeletePatient(Patient patient);
         public abstract void DeletePatientById(Guid patientId);
         public abstract List<Patient> GetAllPatients();

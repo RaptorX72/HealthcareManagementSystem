@@ -3,6 +3,8 @@ using DesktopApplication.Model.Management;
 
 namespace DesktopApplication.Model.Database {
     public interface IDBHandlerMedicalNote {
+        public MedicalNote AddMedicalNote(MedicalNote mediicalNote);
+
         public List<MedicalNote> GetAllMedicalNotes();
 
         public MedicalNote GetMedicalNoteById(Guid medicalNoteId);

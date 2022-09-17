@@ -3,6 +3,8 @@ using DesktopApplication.Model.Management;
 
 namespace DesktopApplication.Model.Database {
     public interface IDBHandlerMedicalTest {
+        public MedicalTest AddMedicalTest(MedicalTest medicalTest);
+
         public List<MedicalTest> GetAllMedicalTests();
 
         public MedicalTest GetMedicalTestById(Guid medicalTestId);

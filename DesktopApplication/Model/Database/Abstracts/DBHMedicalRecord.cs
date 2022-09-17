@@ -3,6 +3,7 @@ using DesktopApplication.Model.Management;
 
 namespace DesktopApplication.Model.Database {
     public abstract class DBHMedicalRecord : IDBHandlerMedicalRecord {
+        public abstract MedicalRecord AddMedicalRecord(MedicalRecord record);
         public abstract void DeleteMedicalRecord(MedicalRecord MedicalRecord);
         public abstract void DeleteMedicalRecordById(Guid medicalRecordId);
         public abstract void DeleteMedicalRecordOfPatient(Patient patient);

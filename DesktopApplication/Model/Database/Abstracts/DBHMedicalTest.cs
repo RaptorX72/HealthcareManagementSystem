@@ -3,6 +3,7 @@ using DesktopApplication.Model.Management;
 
 namespace DesktopApplication.Model.Database {
     public abstract class DBHMedicalTest : IDBHandlerMedicalTest {
+        public abstract MedicalTest AddMedicalTest(MedicalTest medicalTest);
         public abstract void DeleteAllMedicalTestsByDoctor(Doctor doctor);
         public abstract void DeleteAllMedicalTestsByDoctorId(Guid doctorId);
         public abstract void DeleteAllMedicalTestsByType(MedicalTestType medicalTestType);

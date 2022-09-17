@@ -3,6 +3,8 @@ using DesktopApplication.Model.Supplies;
 
 namespace DesktopApplication.Model.Database {
     public interface IDBHandlerMedication {
+        public Medication AddMedication(Medication medication);
+
         public List<Medication> GetAllMedications();
 
         public Medication GetMedicationById(Guid medicationId);

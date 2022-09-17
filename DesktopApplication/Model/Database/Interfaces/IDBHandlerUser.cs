@@ -2,6 +2,8 @@
 
 namespace DesktopApplication.Model.Database {
     public interface IDBHandlerUser {
+        public User AddUser(User user);
+
         public List<User> GetAllUsers();
 
         public User GetUserById(Guid userId);

@@ -3,6 +3,8 @@ using DesktopApplication.Model.Management;
 
 namespace DesktopApplication.Model.Database {
     public interface IDBHandlerPerscription {
+        public Perscription AddPerscription(Perscription perscription);
+
         public List<Perscription> GetAllPerscriptions();
 
         public Perscription GetPerscriptionById(Guid perscriptionId);

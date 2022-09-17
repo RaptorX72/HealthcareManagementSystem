@@ -3,6 +3,7 @@ using DesktopApplication.Model.Management;
 
 namespace DesktopApplication.Model.Database {
     public abstract class DBHSurgery : IDBHandlerSurgery {
+        public abstract Surgery AddSurgery(Surgery surgery);
         public abstract void DeleteAllSurgeriesByAppointerDoctor(Doctor doctor);
         public abstract void DeleteAllSurgeriesByAppointerDoctorId(Guid doctorId);
         public abstract void DeleteAllSurgeriesByDate(DateTime date);

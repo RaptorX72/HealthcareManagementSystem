@@ -2,6 +2,8 @@
 
 namespace DesktopApplication.Model.Database {
     public interface IDBHandlerDoctor {
+        public Doctor AddDoctor(Doctor doctor);
+
         public List<Doctor> GetAllDoctors();
 
         public Doctor GetDoctorById(Guid doctorId);

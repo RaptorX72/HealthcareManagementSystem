@@ -2,6 +2,7 @@
 
 namespace DesktopApplication.Model.Database {
     public abstract class DBHUser : IDBHandlerUser {
+        public abstract User AddUser(User user);
         public abstract List<User> GetAllUsers();
         public abstract User GetUserById(Guid userId);
         public abstract User LoginUser(string username, string password);

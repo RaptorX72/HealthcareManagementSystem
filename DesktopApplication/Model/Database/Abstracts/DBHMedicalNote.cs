@@ -3,6 +3,7 @@ using DesktopApplication.Model.Management;
 
 namespace DesktopApplication.Model.Database {
     public abstract class DBHMedicalNote : IDBHandlerMedicalNote {
+        public abstract MedicalNote AddMedicalNote(MedicalNote mediicalNote);
         public abstract void DeleteAllMedicalNotesByDoctor(Doctor doctor);
         public abstract void DeleteAllMedicalNotesByDoctorId(Guid doctorId);
         public abstract void DeleteAllMedicalNotesByMedicalRecord(MedicalRecord medicalRecord);

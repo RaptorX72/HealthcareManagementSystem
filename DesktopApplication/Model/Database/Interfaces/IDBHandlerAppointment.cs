@@ -3,6 +3,8 @@ using DesktopApplication.Model.Management;
 
 namespace DesktopApplication.Model.Database {
     public interface IDBHandlerAppointment {
+        public Appointment AddAppointment(Appointment appointment);
+
         public List<Appointment> GetAllAppointments();
 
         public Appointment GetAppointmentById(Guid appointmentId);
