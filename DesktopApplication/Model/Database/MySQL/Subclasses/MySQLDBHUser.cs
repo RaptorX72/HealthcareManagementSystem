@@ -10,8 +10,8 @@ namespace DesktopApplication.Model.Database {
         }
 
         private User FillUserWithReaderData(MySqlDataReader reader) {
-            return new User(Guid.Parse(
-                reader.GetString("id")),
+            return new User(
+                Guid.Parse(reader.GetString("id")),
                 reader.GetString("userName"),
                 reader.GetString("email"),
                 reader.GetString("salt"),
@@ -70,7 +70,7 @@ namespace DesktopApplication.Model.Database {
         }
 
         public override User GetUserById(Guid userId) {
-            User? user = null;
+            User user = User.Empty;
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
                 con.Open();
@@ -79,7 +79,6 @@ namespace DesktopApplication.Model.Database {
                     reader.Read();
                     user = FillUserWithReaderData(reader);
                 }
-                if (user == null) user = User.Empty;
                 con.Close();
             }
             return user;
