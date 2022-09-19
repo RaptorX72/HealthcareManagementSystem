@@ -6,8 +6,8 @@ namespace DesktopApplication.Model.Database {
     public class MySQLDBHMedication : DBHMedication {
         private MySqlConnection con;
 
-        public MySQLDBHMedication(MySqlConnection con) {
-            this.con = con;
+        public MySQLDBHMedication(DBConnectionInfo info) {
+            con = CommonTools.CreateMySQLConnection(info);
         }
 
         public override Medication AddMedication(Medication medication) {

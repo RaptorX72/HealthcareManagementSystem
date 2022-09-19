@@ -6,8 +6,8 @@ namespace DesktopApplication.Model.Database {
     public class MySQLDBHMedicalTest : DBHMedicalTest {
         private MySqlConnection con;
 
-        public MySQLDBHMedicalTest(MySqlConnection con) {
-            this.con = con;
+        public MySQLDBHMedicalTest(DBConnectionInfo info) {
+            con = CommonTools.CreateMySQLConnection(info);
         }
 
         public override MedicalTest AddMedicalTest(MedicalTest medicalTest) {

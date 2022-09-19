@@ -6,8 +6,8 @@ namespace DesktopApplication.Model.Database {
     public class MySQLDBHSurgery : DBHSurgery {
         private MySqlConnection con;
 
-        public MySQLDBHSurgery(MySqlConnection con) {
-            this.con = con;
+        public MySQLDBHSurgery(DBConnectionInfo info) {
+            con = CommonTools.CreateMySQLConnection(info);
         }
 
         public override Surgery AddSurgery(Surgery surgery) {

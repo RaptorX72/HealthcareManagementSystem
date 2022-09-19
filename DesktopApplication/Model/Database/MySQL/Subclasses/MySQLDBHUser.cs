@@ -7,7 +7,6 @@ namespace DesktopApplication.Model.Database {
 
         public MySQLDBHUser(DBConnectionInfo info) {
             con = CommonTools.CreateMySQLConnection(info);
-
         }
 
         private User FillUserWithReaderData(MySqlDataReader reader) {

@@ -3,7 +3,6 @@ using System.Text;
 
 namespace DesktopApplication.Model.Database {
     public class MySQLDBHandler : IDBHandler {
-        private MySqlConnection con = new MySqlConnection();
         private MySQLDBHAppointment appointmentDb;
         private MySQLDBHDoctor doctorDb;
         private MySQLDBHMedicalNote medicalNoteDb;
@@ -16,16 +15,15 @@ namespace DesktopApplication.Model.Database {
         private MySQLDBHUser userDb;
 
         public MySQLDBHandler(DBConnectionInfo info) {
-            con.ConnectionString = $"server={info.address};uid={info.username};pwd={info.password};database={info.databaseName}";
-            appointmentDb = new MySQLDBHAppointment(con);
-            doctorDb = new MySQLDBHDoctor(con);
-            medicalNoteDb = new MySQLDBHMedicalNote(con);
-            medicalRecordDb = new MySQLDBHMedicalRecord(con);
-            medicalTestDb = new MySQLDBHMedicalTest(con);
-            medicationDb = new MySQLDBHMedication(con);
-            patientDb = new MySQLDBHPatient(con);
-            perscriptionDb = new MySQLDBHPerscription(con);
-            surgeryDb = new MySQLDBHSurgery(con);
+            appointmentDb = new MySQLDBHAppointment(info);
+            doctorDb = new MySQLDBHDoctor(info);
+            medicalNoteDb = new MySQLDBHMedicalNote(info);
+            medicalRecordDb = new MySQLDBHMedicalRecord(info);
+            medicalTestDb = new MySQLDBHMedicalTest(info);
+            medicationDb = new MySQLDBHMedication(info);
+            patientDb = new MySQLDBHPatient(info);
+            perscriptionDb = new MySQLDBHPerscription(info);
+            surgeryDb = new MySQLDBHSurgery(info);
             userDb = new MySQLDBHUser(info);
         }
 

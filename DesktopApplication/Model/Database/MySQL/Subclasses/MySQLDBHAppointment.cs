@@ -6,8 +6,8 @@ namespace DesktopApplication.Model.Database {
     public class MySQLDBHAppointment : DBHAppointment {
         private MySqlConnection con;
 
-        public MySQLDBHAppointment(MySqlConnection con) {
-            this.con = con;
+        public MySQLDBHAppointment(DBConnectionInfo info) {
+            con = CommonTools.CreateMySQLConnection(info);
         }
 
         public override Appointment AddAppointment(Appointment appointment) {

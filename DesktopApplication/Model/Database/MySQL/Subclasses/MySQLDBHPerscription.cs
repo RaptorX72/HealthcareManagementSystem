@@ -6,8 +6,8 @@ namespace DesktopApplication.Model.Database {
     public class MySQLDBHPerscription : DBHPerscription {
         private MySqlConnection con;
 
-        public MySQLDBHPerscription(MySqlConnection con) {
-            this.con = con;
+        public MySQLDBHPerscription(DBConnectionInfo info) {
+            con = CommonTools.CreateMySQLConnection(info);
         }
 
         public override Perscription AddPerscription(Perscription perscription) {

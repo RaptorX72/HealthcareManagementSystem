@@ -5,8 +5,8 @@ namespace DesktopApplication.Model.Database {
     public class MySQLDBHDoctor : DBHDoctor {
         private MySqlConnection con;
 
-        public MySQLDBHDoctor(MySqlConnection con) {
-            this.con = con;
+        public MySQLDBHDoctor(DBConnectionInfo info) {
+            con = CommonTools.CreateMySQLConnection(info);
         }
 
         public override Doctor AddDoctor(Doctor doctor) {

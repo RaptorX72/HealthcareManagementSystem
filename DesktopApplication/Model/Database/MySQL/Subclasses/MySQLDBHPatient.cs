@@ -5,8 +5,8 @@ namespace DesktopApplication.Model.Database {
     public class MySQLDBHPatient : DBHPatient {
         private MySqlConnection con;
 
-        public MySQLDBHPatient(MySqlConnection con) {
-            this.con = con;
+        public MySQLDBHPatient(DBConnectionInfo info) {
+            con = CommonTools.CreateMySQLConnection(info);
         }
 
         public override Patient AddPatient(Patient patient) {

@@ -6,8 +6,8 @@ namespace DesktopApplication.Model.Database {
     public class MySQLDBHMedicalNote : DBHMedicalNote {
         private MySqlConnection con;
 
-        public MySQLDBHMedicalNote(MySqlConnection con) {
-            this.con = con;
+        public MySQLDBHMedicalNote(DBConnectionInfo info) {
+            con = CommonTools.CreateMySQLConnection(info);
         }
 
         public override MedicalNote AddMedicalNote(MedicalNote mediicalNote) {
