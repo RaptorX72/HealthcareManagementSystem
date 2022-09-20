@@ -20,8 +20,6 @@ namespace DesktopApplication.Model.Database {
 
         public List<Patient> GetPatientsOfDoctor(Doctor doctor);
 
-        public void UpdatePatientsOfDoctorById(Guid doctorId, List<Patient> patients);
-
-        public void UpdatePatientsOfDoctor(Doctor doctor, List<Patient> patients);
+        public void UpdatePatients(List<Patient> patients);
     }
 }

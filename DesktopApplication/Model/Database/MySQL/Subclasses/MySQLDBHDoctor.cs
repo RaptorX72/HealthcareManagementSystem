@@ -136,9 +136,7 @@ namespace DesktopApplication.Model.Database {
         }
 
         public override void UpdateDoctors(List<Doctor> doctors) {
-            foreach (Doctor doctor in doctors) {
-                UpdateDoctor(doctor);
-            }
+            foreach (Doctor doctor in doctors) UpdateDoctor(doctor);
         }
     }
 }
