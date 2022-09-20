@@ -57,6 +57,7 @@ namespace DesktopApplication.Model.Database {
                 }
                 sb.Append(")");
                 cmd.CommandText = sb.ToString();
+                con.Open();
                 cmd.ExecuteNonQuery();
                 con.Close();
             }
@@ -78,6 +79,7 @@ namespace DesktopApplication.Model.Database {
                 }
                 sb.Append(")");
                 cmd.CommandText = sb.ToString();
+                con.Open();
                 cmd.ExecuteNonQuery();
                 con.Close();
             }
@@ -128,6 +130,7 @@ namespace DesktopApplication.Model.Database {
                 }
                 sb.Append(")");
                 cmd.CommandText = sb.ToString();
+                con.Open();
                 using (MySqlDataReader reader = cmd.ExecuteReader()) {
                     while (reader.Read()) medicalNotes.Add(FillMedicalNoteWithReaderData(reader));
                 }
@@ -153,6 +156,7 @@ namespace DesktopApplication.Model.Database {
                 }
                 sb.Append(")");
                 cmd.CommandText = sb.ToString();
+                con.Open();
                 using (MySqlDataReader reader = cmd.ExecuteReader()) {
                     while (reader.Read()) medicalNotes.Add(FillMedicalNoteWithReaderData(reader));
                 }

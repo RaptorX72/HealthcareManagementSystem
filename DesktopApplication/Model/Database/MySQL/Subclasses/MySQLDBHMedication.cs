@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using DesktopApplication.Model.Healthcare;
+using DesktopApplication.Model.Management;
 using DesktopApplication.Model.Supplies;
 using MySql.Data.MySqlClient;
 
@@ -66,7 +67,7 @@ namespace DesktopApplication.Model.Database {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
                 con.Open();
-                cmd.CommandText = "SELECT * From Doctor";
+                cmd.CommandText = "SELECT * FROM Medication";
                 using (MySqlDataReader reader = cmd.ExecuteReader()) {
                     while (reader.Read()) medications.Add(FillMedicationWithReaderData(reader));
                 }
@@ -81,26 +82,8 @@ namespace DesktopApplication.Model.Database {
 
         public override List<Medication> GetAllMedicationsOfPatientById(Guid patientId) {
             List<Medication> medications = new List<Medication>();
-            using (MySqlCommand cmd = new MySqlCommand()) {
-                cmd.Connection = con;
-                //TODO: Implement after perscription
-                con.Open();
-                /*cmd.CommandText = $"SELECT doctorId From DoctorPatientTreatment WHERE patientId = '{patientId}'";
-                using (MySqlDataReader reader = cmd.ExecuteReader()) {
-                    List<Guid> doctorIds = new List<Guid>();
-                    while (reader.Read()) doctorIds.Add(Guid.Parse(reader.GetString("doctorId")));
-                    StringBuilder sb = new StringBuilder();
-                    sb.Append("SELECT * From Doctor WHERE id IN (");
-                    for (int i = 0; i < doctorIds.Count; i++) {
-                        sb.Append($"'{doctorIds[i].ToString()}'");
-                        if (i < doctorIds.Count - 1) sb.Append(", ");
-                    }
-                    sb.Append(")");
-                    cmd.CommandText = sb.ToString();
-                    while (reader.Read()) medications.Add(FillMedicationWithReaderData(reader));
-                }*/
-                con.Close();
-            }
+            List<Perscription> perscriptions = DBHandler.DB.Perscription().GetAllPerscriptionsByPatientId(patientId);
+            foreach (Perscription perscription in perscriptions) medications.Add(perscription.Medication);
             return medications;
         }
 
@@ -109,7 +92,7 @@ namespace DesktopApplication.Model.Database {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
                 con.Open();
-                cmd.CommandText = $"SELECT * From Doctor WHERE id = '{medicationId}'";
+                cmd.CommandText = $"SELECT * FROM Medication WHERE id = '{medicationId}'";
                 using (MySqlDataReader reader = cmd.ExecuteReader()) {
                     reader.Read();
                     medication = FillMedicationWithReaderData(reader);
