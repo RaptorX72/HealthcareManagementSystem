@@ -115,8 +115,10 @@ namespace DesktopApplication.Model.Database {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
                 con.Open();
-                cmd.CommandText = $"UPDATE User SET email = @email, password = @password WHERE id = '{userId}'";
+                cmd.CommandText = $"UPDATE User SET userName = @userName, email = @email, salt = @salt, password = @password WHERE id = '{userId}'";
+                cmd.Parameters.AddWithValue("@userName", user.Username);
                 cmd.Parameters.AddWithValue("@email", user.Email);
+                cmd.Parameters.AddWithValue("@salt", user.Salt);
                 cmd.Parameters.AddWithValue("@password", user.Password);
                 try {
                     cmd.ExecuteNonQuery();

@@ -12,7 +12,6 @@ namespace DesktopApplication.Model.Database {
         public abstract List<Doctor> GetDoctorsOfPatientById(Guid patientId);
         public abstract void UpdateDoctor(Doctor doctor);
         public abstract void UpdateDoctorById(Guid doctorId, Doctor doctor);
-        public abstract void UpdateDoctorsOfPatient(Patient patient, List<Doctor> doctor);
-        public abstract void UpdateDoctorsOfPatientById(Guid patientId, List<Doctor> doctor);
+        public abstract void UpdateDoctors(List<Doctor> doctors);
     }
 }

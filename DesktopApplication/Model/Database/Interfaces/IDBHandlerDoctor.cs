@@ -22,8 +22,6 @@ namespace DesktopApplication.Model.Database {
 
         public List<Doctor> GetDoctorsOfPatient(Patient patient);
 
-        public void UpdateDoctorsOfPatientById(Guid patientId, List<Doctor> doctor);
-
-        public void UpdateDoctorsOfPatient(Patient patient, List<Doctor> doctor);
+        public void UpdateDoctors(List<Doctor> doctors);
     }
 }
