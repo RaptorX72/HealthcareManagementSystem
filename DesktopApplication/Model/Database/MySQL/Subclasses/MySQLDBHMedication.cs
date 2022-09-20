@@ -13,7 +13,7 @@ namespace DesktopApplication.Model.Database {
 
         private Medication FillMedicationWithReaderData(MySqlDataReader reader) {
             return new Medication(
-                Guid.Parse(reader.GetString("id")),
+                reader.GetGuid("id"),
                 reader.GetString("name"),
                 reader.GetString("mainIngredient"),
                 reader.GetDouble("dosage"),

@@ -11,7 +11,7 @@ namespace DesktopApplication.Model.Database {
 
         private User FillUserWithReaderData(MySqlDataReader reader) {
             return new User(
-                Guid.Parse(reader.GetString("id")),
+                reader.GetGuid("id"),
                 reader.GetString("userName"),
                 reader.GetString("email"),
                 reader.GetString("salt"),

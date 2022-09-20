@@ -12,10 +12,10 @@ namespace DesktopApplication.Model.Database {
 
         private Appointment FillAppointmentWithReaderData(MySqlDataReader reader) {
             return new Appointment(
-                Guid.Parse(reader.GetString("id")),
+                reader.GetGuid("id"),
                 reader.GetDateTime("appointmentDate"),
-                Guid.Parse(reader.GetString("doctorId")),
-                Guid.Parse(reader.GetString("patientId")),
+                reader.GetGuid("doctorId"),
+                reader.GetGuid("patientId"),
                 reader.GetString("note")
             );
         }

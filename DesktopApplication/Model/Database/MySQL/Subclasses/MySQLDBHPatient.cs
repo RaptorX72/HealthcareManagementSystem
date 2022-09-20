@@ -12,7 +12,7 @@ namespace DesktopApplication.Model.Database {
 
         private Patient FillPatientWithReaderData(MySqlDataReader reader) {
             return new Patient(
-                Guid.Parse(reader.GetString("id")),
+                reader.GetGuid("id"),
                 reader.GetString("firstName"),
                 reader.GetString("middleName"),
                 reader.GetString("lastName")
