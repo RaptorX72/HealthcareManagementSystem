@@ -9,13 +9,13 @@ namespace DesktopApplication.Model.Database {
 
         public Medication GetMedicationById(Guid medicationId);
 
-        public void UpdateMedicationById(Guid medicationId, Medication Medication);
+        public void UpdateMedicationById(Guid medicationId, Medication medication);
 
-        public void UpdateMedication(Medication Medication);
+        public void UpdateMedication(Medication medication);
 
         public void DeleteMedicationById(Guid medicationId);
 
-        public void DeleteMedication(Medication Medication);
+        public void DeleteMedication(Medication medication);
 
         public List<Medication> GetAllMedicationsOfPatientById(Guid patientId);
 

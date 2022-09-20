@@ -1,4 +1,5 @@
-﻿using DesktopApplication.Model.Healthcare;
+﻿using System.Text;
+using DesktopApplication.Model.Healthcare;
 using DesktopApplication.Model.Supplies;
 using MySql.Data.MySqlClient;
 
@@ -10,40 +11,131 @@ namespace DesktopApplication.Model.Database {
             con = CommonTools.CreateMySQLConnection(info);
         }
 
-        public override Medication AddMedication(Medication medication) {
-            throw new NotImplementedException();
+        private Medication FillMedicationWithReaderData(MySqlDataReader reader) {
+            return new Medication(
+                Guid.Parse(reader.GetString("id")),
+                reader.GetString("name"),
+                reader.GetString("mainIngredient"),
+                reader.GetDouble("dosage"),
+                reader.GetDouble("size"),
+                (UnitOfMeasurement)reader.GetInt32("unitOfMeasurement")
+            );
         }
 
-        public override void DeleteMedication(Medication Medication) {
-            throw new NotImplementedException();
+        public override Medication AddMedication(Medication medication) {
+            Medication newMedication = medication;
+            using (MySqlCommand cmd = new MySqlCommand()) {
+                cmd.Connection = con;
+                con.Open();
+                //check if guid already exists in database
+                while (true) {
+                    cmd.CommandText = $"SELECT Count(id) FROM Medication WHERE id = '{medication.Id}'";
+                    //if yes, generate a new guid
+                    if ((Int64)cmd.ExecuteScalar() == 0) break;
+                    else newMedication = new Medication(newMedication.Name, newMedication.MainIngedient, newMedication.Dosage, newMedication.Size, newMedication.UnitOfMeasurement);
+                }
+                cmd.CommandText = "INSERT INTO Medication (id, name, mainIngredient, dosage, size, uniOfMeasurementId) VALUES (@id, @name, @mainIngredient, @dosage, @size, @unitOfMeasurementId)";
+                cmd.Parameters.AddWithValue("@id", newMedication.Id);
+                cmd.Parameters.AddWithValue("@name", newMedication.Name);
+                cmd.Parameters.AddWithValue("@mainIngredient", newMedication.MainIngedient);
+                cmd.Parameters.AddWithValue("@dosage", newMedication.Dosage);
+                cmd.Parameters.AddWithValue("@size", newMedication.Size);
+                cmd.Parameters.AddWithValue("@unitOfMeasurementId", newMedication.UnitOfMeasurement);
+                cmd.ExecuteNonQuery();
+                con.Close();
+            }
+            return newMedication;
+        }
+
+        public override void DeleteMedication(Medication medication) {
+            DeleteMedicationById(medication.Id);
         }
 
         public override void DeleteMedicationById(Guid medicationId) {
-            throw new NotImplementedException();
+            using (MySqlCommand cmd = new MySqlCommand()) {
+                cmd.Connection = con;
+                con.Open();
+                cmd.CommandText = $"DELETE FROM Medication WHERE id = '{medicationId}'";
+                cmd.ExecuteNonQuery();
+                con.Close();
+            }
         }
 
         public override List<Medication> GetAllMedications() {
-            throw new NotImplementedException();
+            List<Medication> medications = new List<Medication>();
+            using (MySqlCommand cmd = new MySqlCommand()) {
+                cmd.Connection = con;
+                con.Open();
+                cmd.CommandText = "SELECT * From Doctor";
+                using (MySqlDataReader reader = cmd.ExecuteReader()) {
+                    while (reader.Read()) medications.Add(FillMedicationWithReaderData(reader));
+                }
+                con.Close();
+            }
+            return medications;
         }
 
         public override List<Medication> GetAllMedicationsOfPatient(Patient patient) {
-            throw new NotImplementedException();
+            return GetAllMedicationsOfPatientById(patient.Id);
         }
 
         public override List<Medication> GetAllMedicationsOfPatientById(Guid patientId) {
-            throw new NotImplementedException();
+            List<Medication> medications = new List<Medication>();
+            using (MySqlCommand cmd = new MySqlCommand()) {
+                cmd.Connection = con;
+                //TODO: Implement after perscription
+                con.Open();
+                /*cmd.CommandText = $"SELECT doctorId From DoctorPatientTreatment WHERE patientId = '{patientId}'";
+                using (MySqlDataReader reader = cmd.ExecuteReader()) {
+                    List<Guid> doctorIds = new List<Guid>();
+                    while (reader.Read()) doctorIds.Add(Guid.Parse(reader.GetString("doctorId")));
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append("SELECT * From Doctor WHERE id IN (");
+                    for (int i = 0; i < doctorIds.Count; i++) {
+                        sb.Append($"'{doctorIds[i].ToString()}'");
+                        if (i < doctorIds.Count - 1) sb.Append(", ");
+                    }
+                    sb.Append(")");
+                    cmd.CommandText = sb.ToString();
+                    while (reader.Read()) medications.Add(FillMedicationWithReaderData(reader));
+                }*/
+                con.Close();
+            }
+            return medications;
         }
 
         public override Medication GetMedicationById(Guid medicationId) {
-            throw new NotImplementedException();
+            Medication medication = Medication.Empty;
+            using (MySqlCommand cmd = new MySqlCommand()) {
+                cmd.Connection = con;
+                con.Open();
+                cmd.CommandText = $"SELECT * From Doctor WHERE id = '{medicationId}'";
+                using (MySqlDataReader reader = cmd.ExecuteReader()) {
+                    reader.Read();
+                    medication = FillMedicationWithReaderData(reader);
+                }
+                con.Close();
+            }
+            return medication;
         }
 
-        public override void UpdateMedication(Medication Medication) {
-            throw new NotImplementedException();
+        public override void UpdateMedication(Medication medication) {
+            UpdateMedicationById(medication.Id, medication);
         }
 
-        public override void UpdateMedicationById(Guid medicationId, Medication Medication) {
-            throw new NotImplementedException();
+        public override void UpdateMedicationById(Guid medicationId, Medication medication) {
+            using (MySqlCommand cmd = new MySqlCommand()) {
+                cmd.Connection = con;
+                con.Open();
+                cmd.CommandText = $"UPDATE Medication SET name = @name, mainIngredient = @mainIngredient, dosage = @dosage, size = @size, unitOfMeasurementId = @unitOfMeasurementId WHERE id = '{medicationId}'";
+                cmd.Parameters.AddWithValue("@name", medication.Name);
+                cmd.Parameters.AddWithValue("@mainIngredient", medication.MainIngedient);
+                cmd.Parameters.AddWithValue("@dosage", medication.Dosage);
+                cmd.Parameters.AddWithValue("@size", medication.Size);
+                cmd.Parameters.AddWithValue("@unitOfMeasurementId", medication.UnitOfMeasurement);
+                cmd.ExecuteNonQuery();
+                con.Close();
+            }
         }
     }
 }
