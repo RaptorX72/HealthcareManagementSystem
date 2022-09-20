@@ -9,13 +9,13 @@ namespace DesktopApplication.Model.Database {
 
         public Surgery GetSurgeryById(Guid surgeryId);
 
-        public void UpdateSurgeryById(Guid surgeryId, Surgery Surgery);
+        public void UpdateSurgeryById(Guid surgeryId, Surgery surgery);
 
-        public void UpdateSurgery(Surgery Surgery);
+        public void UpdateSurgery(Surgery surgery);
 
         public void DeleteSurgeryById(Guid surgeryId);
 
-        public void DeleteSurgery(Surgery Surgery);
+        public void DeleteSurgery(Surgery surgery);
 
         #region GetAll
         public List<Surgery> GetAllSurgeriesByAppointerDoctorId(Guid doctorId);
@@ -36,21 +36,7 @@ namespace DesktopApplication.Model.Database {
         #endregion
 
         #region UpdateAll
-        public void UpdateAllSurgeriesByAppointerDoctorId(Guid doctorId, List<Surgery> Surgeries);
-
-        public void UpdateAllSurgeriesByAppointerDoctor(Doctor doctor, List<Surgery> Surgeries);
-
-        public void UpdateAllSurgeriesBySurgeonId(Guid doctorId, List<Surgery> Surgeries);
-
-        public void UpdateAllSurgeriesBySurgeon(Doctor doctor, List<Surgery> Surgeries);
-
-        public void UpdateAllSurgeriesOfPatientById(Guid patientId, List<Surgery> Surgeries);
-
-        public void UpdateAllSurgeriesOfPatient(Patient patient, List<Surgery> Surgeries);
-
-        public void UpdateAllSurgeriesByDate(DateTime date, List<Surgery> Surgeries);
-
-        public void UpdateAllSurgeriesByOutcome(SurgeryOutcome outcome, List<Surgery> Surgeries);
+        public void UpdateSurgeries(List<Surgery> surgeries);
         #endregion
 
         #region DeleteAll

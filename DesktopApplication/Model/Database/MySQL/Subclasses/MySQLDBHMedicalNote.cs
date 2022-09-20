@@ -1,6 +1,7 @@
 ﻿using DesktopApplication.Model.Healthcare;
 using DesktopApplication.Model.Management;
 using MySql.Data.MySqlClient;
+using System.Text;
 
 namespace DesktopApplication.Model.Database {
     public class MySQLDBHMedicalNote : DBHMedicalNote {
@@ -10,80 +11,158 @@ namespace DesktopApplication.Model.Database {
             con = CommonTools.CreateMySQLConnection(info);
         }
 
-        public override MedicalNote AddMedicalNote(MedicalNote mediicalNote) {
-            throw new NotImplementedException();
+        private MedicalNote FillMedicalNoteWithReaderData(MySqlDataReader reader) {
+            return new MedicalNote(
+                reader.GetGuid("id"),
+                reader.GetGuid("appointmentId"),
+                reader.GetString("note")
+            );
+        }
+
+        public override MedicalNote AddMedicalNote(MedicalNote medicalNote) {
+            MedicalNote newMedicalNote = medicalNote;
+            using (MySqlCommand cmd = new MySqlCommand()) {
+                cmd.Connection = con;
+                con.Open();
+                //check if guid already exists in database
+                while (true) {
+                    cmd.CommandText = $"SELECT Count(id) FROM MedicalNote WHERE id = '{newMedicalNote.Id}'";
+                    //if yes, generate a new guid
+                    if ((Int64)cmd.ExecuteScalar() == 0) break;
+                    else newMedicalNote = new MedicalNote(newMedicalNote.AppointmentId, newMedicalNote.Note);
+                }
+                cmd.CommandText = "INSERT INTO MedicalNote (id, appointmentId, note) VALUES (@id, @appointmentId, @note)";
+                cmd.Parameters.AddWithValue("@id", newMedicalNote.Id);
+                cmd.Parameters.AddWithValue("@appointmentId", newMedicalNote.AppointmentId);
+                cmd.Parameters.AddWithValue("@note", newMedicalNote.Note);
+                cmd.ExecuteNonQuery();
+                con.Close();
+            }
+            return newMedicalNote;
         }
 
         public override void DeleteAllMedicalNotesByDoctor(Doctor doctor) {
-            throw new NotImplementedException();
+            DeleteAllMedicalNotesByDoctorId(doctor.Id);
         }
 
         public override void DeleteAllMedicalNotesByDoctorId(Guid doctorId) {
-            throw new NotImplementedException();
-        }
-
-        public override void DeleteAllMedicalNotesByMedicalRecord(MedicalRecord medicalRecord) {
-            throw new NotImplementedException();
-        }
-
-        public override void DeleteAllMedicalNotesByMedicalRecordId(Guid medicalRecordId) {
-            throw new NotImplementedException();
+            using (MySqlCommand cmd = new MySqlCommand()) {
+                cmd.Connection = con;
+                List<Appointment> appointments = DBHandler.DB.Appointment().GetAllAppointmentsByDoctorId(doctorId);
+                StringBuilder sb = new StringBuilder();
+                sb.Append("DELETE FROM MedicalNote WHERE appointmentId IN (");
+                for (int i = 0; i < appointments.Count; i++) {
+                    sb.Append($"'{appointments[i].Id}'");
+                    if (i < appointments.Count - 1) sb.Append(", ");
+                }
+                sb.Append(")");
+                cmd.CommandText = sb.ToString();
+                cmd.ExecuteNonQuery();
+                con.Close();
+            }
         }
 
         public override void DeleteAllMedicalNotesOfPatient(Patient patient) {
-            throw new NotImplementedException();
+            DeleteAllMedicalNotesOfPatientById(patient.Id);
         }
 
         public override void DeleteAllMedicalNotesOfPatientById(Guid patientId) {
-            throw new NotImplementedException();
+            using (MySqlCommand cmd = new MySqlCommand()) {
+                cmd.Connection = con;
+                List<Appointment> appointments = DBHandler.DB.Appointment().GetAllAppointmentsByPatientId(patientId);
+                StringBuilder sb = new StringBuilder();
+                sb.Append("DELETE FROM MedicalNote WHERE appointmentId IN (");
+                for (int i = 0; i < appointments.Count; i++) {
+                    sb.Append($"'{appointments[i].Id}'");
+                    if (i < appointments.Count - 1) sb.Append(", ");
+                }
+                sb.Append(")");
+                cmd.CommandText = sb.ToString();
+                cmd.ExecuteNonQuery();
+                con.Close();
+            }
         }
 
-        public override void DeleteMedicalNote(MedicalNote MedicalNote) {
-            throw new NotImplementedException();
-        }
-
-        public override void DeleteMedicalNoteByAppointment(Appointment appointment) {
-            throw new NotImplementedException();
-        }
-
-        public override void DeleteMedicalNoteByAppointmentId(Guid appointmentId) {
-            throw new NotImplementedException();
+        public override void DeleteMedicalNote(MedicalNote medicalNote) {
+            DeleteMedicalNoteById(medicalNote.Id);
         }
 
         public override void DeleteMedicalNoteById(Guid medicalNoteId) {
-            throw new NotImplementedException();
+            using (MySqlCommand cmd = new MySqlCommand()) {
+                cmd.Connection = con;
+                con.Open();
+                cmd.CommandText = $"DELETE FROM MedicalNote WHERE id = '{medicalNoteId}'";
+                cmd.ExecuteNonQuery();
+                con.Close();
+            }
         }
 
         public override List<MedicalNote> GetAllMedicalNotes() {
-            throw new NotImplementedException();
+            List<MedicalNote> medicalNotes = new List<MedicalNote>();
+            using (MySqlCommand cmd = new MySqlCommand()) {
+                cmd.Connection = con;
+                con.Open();
+                cmd.CommandText = "SELECT * From MedicalNote";
+                using (MySqlDataReader reader = cmd.ExecuteReader()) {
+                    while (reader.Read()) medicalNotes.Add(FillMedicalNoteWithReaderData(reader));
+                }
+                con.Close();
+            }
+            return medicalNotes;
         }
 
         public override List<MedicalNote> GetAllMedicalNotesByDoctor(Doctor doctor) {
-            throw new NotImplementedException();
+            return GetAllMedicalNotesByDoctorId(doctor.Id);
         }
 
         public override List<MedicalNote> GetAllMedicalNotesByDoctorId(Guid doctorId) {
-            throw new NotImplementedException();
-        }
-
-        public override List<MedicalNote> GetAllMedicalNotesByMedicalRecord(MedicalRecord medicalRecord) {
-            throw new NotImplementedException();
-        }
-
-        public override List<MedicalNote> GetAllMedicalNotesByMedicalRecordId(Guid medicalRecordId) {
-            throw new NotImplementedException();
+            List<MedicalNote> medicalNotes = new List<MedicalNote>();
+            using (MySqlCommand cmd = new MySqlCommand()) {
+                cmd.Connection = con;
+                List<Appointment> appointments = DBHandler.DB.Appointment().GetAllAppointmentsByDoctorId(doctorId);
+                StringBuilder sb = new StringBuilder();
+                sb.Append("SELECT * FROM MedicalNote WHERE appointmentId IN (");
+                for (int i = 0; i < appointments.Count; i++) {
+                    sb.Append($"'{appointments[i].Id}'");
+                    if (i < appointments.Count - 1) sb.Append(", ");
+                }
+                sb.Append(")");
+                cmd.CommandText = sb.ToString();
+                using (MySqlDataReader reader = cmd.ExecuteReader()) {
+                    while (reader.Read()) medicalNotes.Add(FillMedicalNoteWithReaderData(reader));
+                }
+                con.Close();
+            }
+            return medicalNotes;
         }
 
         public override List<MedicalNote> GetAllMedicalNotesOfPatient(Patient patient) {
-            throw new NotImplementedException();
+            return GetAllMedicalNotesOfPatientId(patient.Id);
         }
 
         public override List<MedicalNote> GetAllMedicalNotesOfPatientId(Guid patientId) {
-            throw new NotImplementedException();
+            List<MedicalNote> medicalNotes = new List<MedicalNote>();
+            using (MySqlCommand cmd = new MySqlCommand()) {
+                cmd.Connection = con;
+                List<Appointment> appointments = DBHandler.DB.Appointment().GetAllAppointmentsByPatientId(patientId);
+                StringBuilder sb = new StringBuilder();
+                sb.Append("SELECT * FROM MedicalNote WHERE appointmentId IN (");
+                for (int i = 0; i < appointments.Count; i++) {
+                    sb.Append($"'{appointments[i].Id}'");
+                    if (i < appointments.Count - 1) sb.Append(", ");
+                }
+                sb.Append(")");
+                cmd.CommandText = sb.ToString();
+                using (MySqlDataReader reader = cmd.ExecuteReader()) {
+                    while (reader.Read()) medicalNotes.Add(FillMedicalNoteWithReaderData(reader));
+                }
+                con.Close();
+            }
+            return medicalNotes;
         }
 
         public override MedicalNote GetMedicalNoteByAppointment(Appointment appointment) {
-            throw new NotImplementedException();
+            return GetMedicalNoteByAppointmentId(appointment.Id);
         }
 
         public override MedicalNote GetMedicalNoteByAppointmentId(Guid appointmentId) {
@@ -91,47 +170,38 @@ namespace DesktopApplication.Model.Database {
         }
 
         public override MedicalNote GetMedicalNoteById(Guid medicalNoteId) {
-            throw new NotImplementedException();
+            MedicalNote medicalNote = MedicalNote.Empty;
+            using (MySqlCommand cmd = new MySqlCommand()) {
+                cmd.Connection = con;
+                con.Open();
+                cmd.CommandText = $"SELECT * From MedicalNote WHERE id = '{medicalNoteId}'";
+                using (MySqlDataReader reader = cmd.ExecuteReader()) {
+                    reader.Read();
+                    medicalNote = FillMedicalNoteWithReaderData(reader);
+                }
+                con.Close();
+            }
+            return medicalNote;
         }
 
-        public override void UpdateAllMedicalNotesByDoctor(Doctor doctor, List<MedicalNote> MedicalNotes) {
-            throw new NotImplementedException();
+        public override void UpdateMedicalNote(MedicalNote medicalNote) {
+            UpdateMedicalNoteById(medicalNote.Id, medicalNote);
         }
 
-        public override void UpdateAllMedicalNotesByDoctorId(Guid doctorId, List<MedicalNote> MedicalNotes) {
-            throw new NotImplementedException();
+        public override void UpdateMedicalNoteById(Guid medicalNoteId, MedicalNote medicalNote) {
+            using (MySqlCommand cmd = new MySqlCommand()) {
+                cmd.Connection = con;
+                con.Open();
+                cmd.CommandText = $"UPDATE MedicalNote SET appointmentId = @appointmentId, note = @note WHERE id = '{medicalNoteId}'";
+                cmd.Parameters.AddWithValue("@appointerId", medicalNote.AppointmentId);
+                cmd.Parameters.AddWithValue("@note", medicalNote.Note);
+                cmd.ExecuteNonQuery();
+                con.Close();
+            }
         }
 
-        public override void UpdateAllMedicalNotesByMedicalRecord(MedicalRecord medicalRecord, List<MedicalNote> medicalNotes) {
-            throw new NotImplementedException();
-        }
-
-        public override void UpdateAllMedicalNotesByMedicalRecordId(Guid medicalRecordId, List<MedicalNote> medicalNotes) {
-            throw new NotImplementedException();
-        }
-
-        public override void UpdateAllMedicalNotesOfPatient(Patient patient, List<MedicalNote> MedicalNotes) {
-            throw new NotImplementedException();
-        }
-
-        public override void UpdateAllMedicalNotesOfPatientById(Guid patientId, List<MedicalNote> MedicalNotes) {
-            throw new NotImplementedException();
-        }
-
-        public override void UpdateMedicalNote(MedicalNote MedicalNote) {
-            throw new NotImplementedException();
-        }
-
-        public override void UpdateMedicalNoteByAppointment(Appointment appointment, MedicalNote MedicalNote) {
-            throw new NotImplementedException();
-        }
-
-        public override void UpdateMedicalNoteByAppointmentId(Guid appointmentId, MedicalNote MedicalNote) {
-            throw new NotImplementedException();
-        }
-
-        public override void UpdateMedicalNoteById(Guid medicalNoteId, MedicalNote MedicalNote) {
-            throw new NotImplementedException();
+        public override void UpdateMedicalNotes(List<MedicalNote> medicalNotes) {
+            foreach (MedicalNote medicalNote in medicalNotes) UpdateMedicalNote(medicalNote);
         }
     }
 }
