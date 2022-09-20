@@ -9,13 +9,13 @@ namespace DesktopApplication.Model.Database {
 
         public Perscription GetPerscriptionById(Guid perscriptionId);
 
-        public void UpdatePerscriptionById(Guid perscriptionId, Perscription Perscription);
+        public void UpdatePerscriptionById(Guid perscriptionId, Perscription perscription);
 
-        public void UpdatePerscription(Perscription Perscription);
+        public void UpdatePerscription(Perscription perscription);
 
         public void DeletePerscriptionById(Guid perscriptionId);
 
-        public void DeletePerscription(Perscription Perscription);
+        public void DeletePerscription(Perscription perscription);
 
         #region GetAll
         public List<Perscription> GetAllPerscriptionsByDoctorId(Guid doctorId);
@@ -28,13 +28,7 @@ namespace DesktopApplication.Model.Database {
         #endregion
 
         #region UpdateAll
-        public void UpdateAllPerscriptionsByDoctorId(Guid doctorId, List<Perscription> Perscriptions);
-
-        public void UpdateAllPerscriptionsByDoctor(Doctor doctor, List<Perscription> Perscriptions);
-
-        public void UpdateAllPerscriptionsByPatientId(Guid patientId, List<Perscription> Perscriptions);
-
-        public void UpdateAllPerscriptionsByPatient(Patient patient, List<Perscription> Perscriptions);
+        public void UpdatePerscriptions(List<Perscription> perscriptions);
         #endregion
 
         #region DeleteAll

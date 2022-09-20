@@ -10,80 +10,170 @@ namespace DesktopApplication.Model.Database {
             con = CommonTools.CreateMySQLConnection(info);
         }
 
+        private Perscription FillPerscriptionWithReaderData(MySqlDataReader reader) {
+            return new Perscription(
+                reader.GetGuid("id"),
+                reader.GetGuid("patientId"),
+                reader.GetGuid("doctorId"),
+                DBHandler.DB.Medication().GetMedicationById(reader.GetGuid("medicationId")),
+                reader.GetString("note")
+            );
+        }
+
         public override Perscription AddPerscription(Perscription perscription) {
-            throw new NotImplementedException();
+            Perscription newPerscription = perscription;
+            using (MySqlCommand cmd = new MySqlCommand()) {
+                cmd.Connection = con;
+                con.Open();
+                //check if guid already exists in database
+                while (true) {
+                    cmd.CommandText = $"SELECT Count(id) FROM Perscription WHERE id = '{newPerscription.Id}'";
+                    //if yes, generate a new guid
+                    if ((Int64)cmd.ExecuteScalar() == 0) break;
+                    else newPerscription = new Perscription(newPerscription.PatientId, newPerscription.DoctorId, newPerscription.Medication, newPerscription.Note);
+                }
+                cmd.CommandText = "INSERT INTO Perscription (id, patientId, doctorId, medicationId, note) VALUES (@id, @patientId, @doctorId, @medicationId, @note)";
+                cmd.Parameters.AddWithValue("@id", newPerscription.Id);
+                cmd.Parameters.AddWithValue("@patientId", newPerscription.PatientId);
+                cmd.Parameters.AddWithValue("@doctorId", newPerscription.DoctorId);
+                cmd.Parameters.AddWithValue("@medicationId", newPerscription.Medication);
+                cmd.Parameters.AddWithValue("@note", newPerscription.Note);
+                cmd.ExecuteNonQuery();
+                con.Close();
+            }
+            return newPerscription;
         }
 
         public override void DeleteAllPerscriptionsByDoctor(Doctor doctor) {
-            throw new NotImplementedException();
+            DeleteAllPerscriptionsByDoctorId(doctor.Id);
         }
 
         public override void DeleteAllPerscriptionsByDoctorId(Guid doctorId) {
-            throw new NotImplementedException();
+            //TODO: add delete notes
+            using (MySqlCommand cmd = new MySqlCommand()) {
+                cmd.Connection = con;
+                con.Open();
+                cmd.CommandText = $"DELETE FROM Perscription WHERE doctorId = '{doctorId}'";
+                cmd.ExecuteNonQuery();
+                con.Close();
+            }
         }
 
         public override void DeleteAllPerscriptionsByPatient(Patient patient) {
-            throw new NotImplementedException();
+            DeleteAllPerscriptionsByPatientId(patient.Id);
         }
 
         public override void DeleteAllPerscriptionsByPatientId(Guid patientId) {
-            throw new NotImplementedException();
+            //TODO: add delete notes
+            using (MySqlCommand cmd = new MySqlCommand()) {
+                cmd.Connection = con;
+                con.Open();
+                cmd.CommandText = $"DELETE FROM Perscription WHERE patientId = '{patientId}'";
+                cmd.ExecuteNonQuery();
+                con.Close();
+            }
         }
 
-        public override void DeletePerscription(Perscription Perscription) {
-            throw new NotImplementedException();
+        public override void DeletePerscription(Perscription perscription) {
+            DeletePerscriptionById(perscription.Id);
         }
 
         public override void DeletePerscriptionById(Guid perscriptionId) {
-            throw new NotImplementedException();
+            //TODO: add delete notes
+            using (MySqlCommand cmd = new MySqlCommand()) {
+                cmd.Connection = con;
+                con.Open();
+                cmd.CommandText = $"DELETE FROM Perscription WHERE id = '{perscriptionId}'";
+                cmd.ExecuteNonQuery();
+                con.Close();
+            }
         }
 
         public override List<Perscription> GetAllPerscriptions() {
-            throw new NotImplementedException();
+            List<Perscription> perscriptions = new List<Perscription>();
+            using (MySqlCommand cmd = new MySqlCommand()) {
+                cmd.Connection = con;
+                con.Open();
+                cmd.CommandText = "SELECT * From Perscription";
+                using (MySqlDataReader reader = cmd.ExecuteReader()) {
+                    while (reader.Read()) perscriptions.Add(FillPerscriptionWithReaderData(reader));
+                }
+                con.Close();
+            }
+            return perscriptions;
         }
 
         public override List<Perscription> GetAllPerscriptionsByDoctor(Doctor doctor) {
-            throw new NotImplementedException();
+            return GetAllPerscriptionsByDoctorId(doctor.Id);
         }
 
         public override List<Perscription> GetAllPerscriptionsByDoctorId(Guid doctorId) {
-            throw new NotImplementedException();
+            List<Perscription> perscriptions = new List<Perscription>();
+            using (MySqlCommand cmd = new MySqlCommand()) {
+                cmd.Connection = con;
+                con.Open();
+                cmd.CommandText = $"SELECT * From Perscription WHERE doctorId = '{doctorId}'";
+                using (MySqlDataReader reader = cmd.ExecuteReader()) {
+                    while (reader.Read()) perscriptions.Add(FillPerscriptionWithReaderData(reader));
+                }
+                con.Close();
+            }
+            return perscriptions;
         }
 
         public override List<Perscription> GetAllPerscriptionsByPatient(Patient patient) {
-            throw new NotImplementedException();
+            return GetAllPerscriptionsByPatientId(patient.Id);
         }
 
         public override List<Perscription> GetAllPerscriptionsByPatientId(Guid patientId) {
-            throw new NotImplementedException();
+            List<Perscription> perscriptions = new List<Perscription>();
+            using (MySqlCommand cmd = new MySqlCommand()) {
+                cmd.Connection = con;
+                con.Open();
+                cmd.CommandText = $"SELECT * From Perscription WHERE patientId = '{patientId}'";
+                using (MySqlDataReader reader = cmd.ExecuteReader()) {
+                    while (reader.Read()) perscriptions.Add(FillPerscriptionWithReaderData(reader));
+                }
+                con.Close();
+            }
+            return perscriptions;
         }
 
         public override Perscription GetPerscriptionById(Guid perscriptionId) {
-            throw new NotImplementedException();
+            Perscription perscription = Perscription.Empty;
+            using (MySqlCommand cmd = new MySqlCommand()) {
+                cmd.Connection = con;
+                con.Open();
+                cmd.CommandText = $"SELECT * From Perscription WHERE id = '{perscriptionId}'";
+                using (MySqlDataReader reader = cmd.ExecuteReader()) {
+                    reader.Read();
+                    perscription = FillPerscriptionWithReaderData(reader);
+                }
+                con.Close();
+            }
+            return perscription;
         }
 
-        public override void UpdateAllPerscriptionsByDoctor(Doctor doctor, List<Perscription> Perscriptions) {
-            throw new NotImplementedException();
+        public override void UpdatePerscriptions(List<Perscription> perscriptions) {
+            foreach (Perscription perscription in perscriptions) UpdatePerscription(perscription);
         }
 
-        public override void UpdateAllPerscriptionsByDoctorId(Guid doctorId, List<Perscription> Perscriptions) {
-            throw new NotImplementedException();
+        public override void UpdatePerscription(Perscription perscription) {
+            UpdatePerscriptionById(perscription.Id, perscription);
         }
 
-        public override void UpdateAllPerscriptionsByPatient(Patient patient, List<Perscription> Perscriptions) {
-            throw new NotImplementedException();
-        }
-
-        public override void UpdateAllPerscriptionsByPatientId(Guid patientId, List<Perscription> Perscriptions) {
-            throw new NotImplementedException();
-        }
-
-        public override void UpdatePerscription(Perscription Perscription) {
-            throw new NotImplementedException();
-        }
-
-        public override void UpdatePerscriptionById(Guid perscriptionId, Perscription Perscription) {
-            throw new NotImplementedException();
+        public override void UpdatePerscriptionById(Guid perscriptionId, Perscription perscription) {
+            using (MySqlCommand cmd = new MySqlCommand()) {
+                cmd.Connection = con;
+                con.Open();
+                cmd.CommandText = $"UPDATE Perscription SET patientId = @patientId, doctorId = @doctorId, medicationId = @medicationId, note = @note WHERE id = '{perscriptionId}'";
+                cmd.Parameters.AddWithValue("@patientId", perscription.PatientId);
+                cmd.Parameters.AddWithValue("@doctorId", perscription.DoctorId);
+                cmd.Parameters.AddWithValue("@medicationId", perscription.Medication.Id);
+                cmd.Parameters.AddWithValue("@note", perscription.Note);
+                cmd.ExecuteNonQuery();
+                con.Close();
+            }
         }
     }
 }
