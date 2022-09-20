@@ -32,17 +32,7 @@ namespace DesktopApplication.Model.Database {
         #endregion
 
         #region UpdateAll
-        public void UpdateAllAppointmentsByDoctorId(Guid doctorId, List<Appointment> appointments);
-
-        public void UpdateAllAppointmentsByDoctor(Doctor doctor, List<Appointment> appointments);
-
-        public void UpdateAllAppointmentsByPatientId(Guid patientId, List<Appointment> appointments);
-
-        public void UpdateAllAppointmentsByPatient(Patient patient, List<Appointment> appointments);
-
-        public void UpdateAllAppointmentsBySpecialityId(Guid specialityId, List<Appointment> appointments);
-
-        public void UpdateAllAppointmentsByDate(DateTime date, List<Appointment> appointments);
+        public void UpdateAppointments(List<Appointment> appointments);
         #endregion
 
         #region DeleteAll

@@ -183,67 +183,8 @@ namespace DesktopApplication.Model.Database {
             return appointment;
         }
 
-        public override void UpdateAllAppointmentsByDate(DateTime date, List<Appointment> appointments) {
-            using (MySqlCommand cmd = new MySqlCommand()) {
-                cmd.Connection = con;
-                con.Open();
-                foreach (Appointment appointment in appointments) {
-                    if (appointment.Date != date) continue;
-                    cmd.CommandText = $"UPDATE Appointment SET appointmentDate = @date, doctorId = @doctorId, patientId = @patientId, note = @note WHERE id = '{appointment.Id}' AND appointmentDate = {appointment.Date}";
-                    cmd.Parameters.AddWithValue("@date", appointment.Date);
-                    cmd.Parameters.AddWithValue("@doctorId", appointment.DoctorId);
-                    cmd.Parameters.AddWithValue("@patientId", appointment.PatientId);
-                    cmd.Parameters.AddWithValue("@note", appointment.Notes);
-                    cmd.ExecuteNonQuery();
-                }
-                con.Close();
-            }
-        }
-
-        public override void UpdateAllAppointmentsByDoctor(Doctor doctor, List<Appointment> appointments) {
-            UpdateAllAppointmentsByDoctorId(doctor.Id, appointments);
-        }
-
-        public override void UpdateAllAppointmentsByDoctorId(Guid doctorId, List<Appointment> appointments) {
-            using (MySqlCommand cmd = new MySqlCommand()) {
-                cmd.Connection = con;
-                con.Open();
-                foreach (Appointment appointment in appointments) {
-                    if (appointment.DoctorId != doctorId) continue;
-                    cmd.CommandText = $"UPDATE Appointment SET appointmentDate = @date, doctorId = @doctorId, patientId = @patientId, note = @note WHERE id = '{appointment.Id}' AND doctorId = '{appointment.DoctorId}'";
-                    cmd.Parameters.AddWithValue("@date", appointment.Date);
-                    cmd.Parameters.AddWithValue("@doctorId", appointment.DoctorId);
-                    cmd.Parameters.AddWithValue("@patientId", appointment.PatientId);
-                    cmd.Parameters.AddWithValue("@note", appointment.Notes);
-                    cmd.ExecuteNonQuery();
-                }
-                con.Close();
-            }
-        }
-
-        public override void UpdateAllAppointmentsByPatient(Patient patient, List<Appointment> appointments) {
-            UpdateAllAppointmentsByPatientId(patient.Id, appointments);
-        }
-
-        public override void UpdateAllAppointmentsByPatientId(Guid patientId, List<Appointment> appointments) {
-            using (MySqlCommand cmd = new MySqlCommand()) {
-                cmd.Connection = con;
-                con.Open();
-                foreach (Appointment appointment in appointments) {
-                    if (appointment.PatientId != patientId) continue;
-                    cmd.CommandText = $"UPDATE Appointment SET appointmentDate = @date, doctorId = @doctorId, patientId = @patientId, note = @note WHERE id = '{appointment.Id}' AND patientId = '{appointment.PatientId}'";
-                    cmd.Parameters.AddWithValue("@date", appointment.Date);
-                    cmd.Parameters.AddWithValue("@doctorId", appointment.DoctorId);
-                    cmd.Parameters.AddWithValue("@patientId", appointment.PatientId);
-                    cmd.Parameters.AddWithValue("@note", appointment.Notes);
-                    cmd.ExecuteNonQuery();
-                }
-                con.Close();
-            }
-        }
-
-        public override void UpdateAllAppointmentsBySpecialityId(Guid specialityId, List<Appointment> appointments) {
-            throw new NotImplementedException();
+        public override void UpdateAppointments(List<Appointment> appointments) {
+            foreach (Appointment appointment in appointments) UpdateAppointment(appointment);
         }
 
         public override void UpdateAppointment(Appointment appointment) {
