@@ -9,13 +9,13 @@ namespace DesktopApplication.Model.Database {
 
         public MedicalTest GetMedicalTestById(Guid medicalTestId);
 
-        public void UpdateMedicalTestById(Guid medicalTestId, MedicalTest MedicalTest);
+        public void UpdateMedicalTestById(Guid medicalTestId, MedicalTest medicalTest);
 
-        public void UpdateMedicalTest(MedicalTest MedicalTest);
+        public void UpdateMedicalTest(MedicalTest medicalTest);
 
         public void DeleteMedicalTestById(Guid medicalTestId);
 
-        public void DeleteMedicalTest(MedicalTest MedicalTest);
+        public void DeleteMedicalTest(MedicalTest medicalTest);
 
         #region GetAll
         public List<MedicalTest> GetAllMedicalTestsOfPatientById(Guid patientId);
@@ -30,15 +30,7 @@ namespace DesktopApplication.Model.Database {
         #endregion
 
         #region UpdateAll
-        public void UpdateAllMedicalTestsOfPatientById(Guid patientId, List<MedicalTest> medicalTests);
-
-        public void UpdateAllMedicalTestsOfPatient(Patient patient, List<MedicalTest> medicalTests);
-
-        public void UpdateAllMedicalTestsByDoctorId(Guid doctorId, List<MedicalTest> medicalTests);
-
-        public void UpdateAllMedicalTestsByDoctor(Doctor doctor, List<MedicalTest> medicalTests);
-
-        public void UpdateAllMedicalTestsByType(MedicalTestType medicalTestType, List<MedicalTest> medicalTests);
+        public void UpdateMedicalTests(List<MedicalTest> medicalTests);
         #endregion
 
         #region DeleteAll
