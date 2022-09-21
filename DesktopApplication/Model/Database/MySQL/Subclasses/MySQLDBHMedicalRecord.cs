@@ -5,30 +5,36 @@ using MySql.Data.MySqlClient;
 namespace DesktopApplication.Model.Database {
     public class MySQLDBHMedicalRecord : DBHMedicalRecord {
         private MySqlConnection con;
+        private MySqlConnection bloodCon;
 
         public MySQLDBHMedicalRecord(DBConnectionInfo info) {
             con = CommonTools.CreateMySQLConnection(info);
+            bloodCon = CommonTools.CreateMySQLConnection(info);
         }
 
         private BloodType GetBloodTypeById(int id) {
             BloodType bloodType = BloodType.Empty;
             using (MySqlCommand cmd = new MySqlCommand()) {
-                cmd.Connection = con;
+                cmd.Connection = bloodCon;
                 cmd.CommandText = $"SELECT * FROM BloodType WHERE id = {id}";
+                con.Open();
                 using (MySqlDataReader reader = cmd.ExecuteReader()) {
                     reader.Read();
                     bloodType = new BloodType(reader.GetString("protein"), reader.GetBoolean("rh"));
                 }
             }
+            con.Close();
             return bloodType;
         }
 
         private int GetIdOfBloodType(BloodType type) {
             using (MySqlCommand cmd = new MySqlCommand()) {
-                cmd.Connection = con;
+                cmd.Connection = bloodCon;
                 cmd.CommandText = $"SELECT id FROM BloodType WHERE antigen = '{type.BloodAntigen}' AND rh = {type.Rh}";
+                con.Open();
                 using (MySqlDataReader reader = cmd.ExecuteReader()) {
                     reader.Read();
+                    con.Close();
                     return reader.GetInt32("id");
                 }
             }
@@ -74,7 +80,7 @@ namespace DesktopApplication.Model.Database {
                 cmd.Parameters.AddWithValue("@patientId", newMedicalRecord.PatientId);
                 cmd.Parameters.AddWithValue("@birthDate", newMedicalRecord.BirthDate);
                 cmd.Parameters.AddWithValue("@gender", newMedicalRecord.Gender);
-                cmd.Parameters.AddWithValue("@bloodTypeId", newMedicalRecord.BloodType);
+                cmd.Parameters.AddWithValue("@bloodTypeId", GetIdOfBloodType(newMedicalRecord.BloodType));
                 cmd.Parameters.AddWithValue("@height", newMedicalRecord.Height);
                 cmd.Parameters.AddWithValue("@weight", newMedicalRecord.Weight);
                 cmd.ExecuteNonQuery();
