@@ -1,6 +1,7 @@
 using MySql.Data.MySqlClient;
 using DesktopApplication.Model;
 using DesktopApplication.Model.Database;
+using DesktopApplication.Model.Healthcare;
 using DesktopApplication.Model.Management;
 
 namespace DesktopApplication {
@@ -18,7 +19,10 @@ namespace DesktopApplication {
         }
 
         private void buttonTest_Click(object sender, EventArgs e) {
-            MessageBox.Show("Done");
+            try {
+            } catch (MySqlException ex) {
+                MessageBox.Show(ex.Message);
+            }
         }
     }
 }

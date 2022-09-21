@@ -26,16 +26,16 @@ namespace DesktopApplication.Model.Database {
                 con.Open();
                 //check if guid already exists in database
                 while (true) {
-                    cmd.CommandText = $"SELECT Count(id) FROM Doctor WHERE id = '{newPatient.Id}'";
+                    cmd.CommandText = $"SELECT COUNT(id) FROM Patient WHERE id = '{newPatient.Id}'";
                     //if yes, generate a new guid
                     if ((Int64)cmd.ExecuteScalar() == 0) break;
                     else newPatient = new Patient(newPatient.FirstName, newPatient.MiddleName, newPatient.LastName);
                 }
-                cmd.CommandText = "INSERT INTO Doctor (id, firstName, middleName, lastName) VALUES (@id, @firstName, @middleName, @lastName)";
+                cmd.CommandText = "INSERT INTO Patient (id, firstName, middleName, lastName) VALUES (@id, @firstName, @middleName, @lastName)";
                 cmd.Parameters.AddWithValue("@id", newPatient.Id);
-                cmd.Parameters.AddWithValue("@firstName", newPatient.Id);
-                cmd.Parameters.AddWithValue("@middleName", newPatient.Id);
-                cmd.Parameters.AddWithValue("@lastName", newPatient.Id);
+                cmd.Parameters.AddWithValue("@firstName", newPatient.FirstName);
+                cmd.Parameters.AddWithValue("@middleName", newPatient.MiddleName);
+                cmd.Parameters.AddWithValue("@lastName", newPatient.LastName);
                 cmd.ExecuteNonQuery();
                 con.Close();
             }
@@ -61,7 +61,7 @@ namespace DesktopApplication.Model.Database {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
                 con.Open();
-                cmd.CommandText = "SELECT * From Patient";
+                cmd.CommandText = "SELECT * FROM Patient";
                 using (MySqlDataReader reader = cmd.ExecuteReader()) {
                     while (reader.Read()) patients.Add(FillPatientWithReaderData(reader));
                 }
@@ -75,10 +75,10 @@ namespace DesktopApplication.Model.Database {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
                 con.Open();
-                cmd.CommandText = $"SELECT * From Doctor WHERE id = '{patientId}'";
+                cmd.CommandText = $"SELECT * FROM Patient WHERE id = '{patientId}'";
                 using (MySqlDataReader reader = cmd.ExecuteReader()) {
                     reader.Read();
-                    patient = FillPatientWithReaderData(reader);
+                    if (reader.HasRows) patient = FillPatientWithReaderData(reader);
                 }
                 con.Close();
             }
@@ -94,18 +94,20 @@ namespace DesktopApplication.Model.Database {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
                 con.Open();
-                cmd.CommandText = $"SELECT patientId From DoctorPatientTreatment WHERE doctorId = '{doctorId}'";
+                cmd.CommandText = $"SELECT patientId FROM DoctorPatientTreatment WHERE doctorId = '{doctorId}'";
+                StringBuilder sb = new StringBuilder();
                 using (MySqlDataReader reader = cmd.ExecuteReader()) {
-                    List<Guid> doctorIds = new List<Guid>();
-                    while (reader.Read()) doctorIds.Add(Guid.Parse(reader.GetString("patientId")));
-                    StringBuilder sb = new StringBuilder();
-                    sb.Append("SELECT * From Doctor WHERE id IN (");
-                    for (int i = 0; i < doctorIds.Count; i++) {
-                        sb.Append($"'{doctorIds[i].ToString()}'");
-                        if (i < doctorIds.Count - 1) sb.Append(", ");
+                    List<Guid> ids = new List<Guid>();
+                    while (reader.Read()) ids.Add(reader.GetGuid("patientId"));
+                    sb.Append("SELECT * FROM Patient WHERE id IN (");
+                    for (int i = 0; i < ids.Count; i++) {
+                        sb.Append($"'{ids[i].ToString()}'");
+                        if (i < ids.Count - 1) sb.Append(", ");
                     }
                     sb.Append(")");
-                    cmd.CommandText = sb.ToString();
+                }
+                cmd.CommandText = sb.ToString();
+                using (MySqlDataReader reader = cmd.ExecuteReader()) {
                     while (reader.Read()) patients.Add(FillPatientWithReaderData(reader));
                 }
                 con.Close();

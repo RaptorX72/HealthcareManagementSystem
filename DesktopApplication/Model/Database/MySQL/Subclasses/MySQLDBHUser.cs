@@ -82,7 +82,7 @@ namespace DesktopApplication.Model.Database {
                 cmd.CommandText = $"SELECT * FROM User WHERE id = '{userId}'";
                 using (MySqlDataReader reader = cmd.ExecuteReader()) {
                     reader.Read();
-                    user = FillUserWithReaderData(reader);
+                    if (reader.HasRows) user = FillUserWithReaderData(reader);
                 }
                 con.Close();
             }

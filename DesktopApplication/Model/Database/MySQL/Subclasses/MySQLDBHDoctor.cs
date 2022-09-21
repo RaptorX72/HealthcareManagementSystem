@@ -27,18 +27,23 @@ namespace DesktopApplication.Model.Database {
                 con.Open();
                 //check if guid already exists in database
                 while (true) {
-                    cmd.CommandText = $"SELECT Count(id) FROM Doctor WHERE id = '{newDoctor.Id}'";
+                    cmd.CommandText = $"SELECT COUNT(id) FROM Doctor WHERE id = '{newDoctor.Id}'";
                     //if yes, generate a new guid
                     if ((Int64)cmd.ExecuteScalar() == 0) break;
                     else newDoctor = new Doctor(newDoctor.FirstName, newDoctor.MiddleName, newDoctor.LastName, newDoctor.SpecialityId);
                 }
                 cmd.CommandText = "INSERT INTO Doctor (id, firstName, middleName, lastName) VALUES (@id, @firstName, @middleName, @lastName)";
                 cmd.Parameters.AddWithValue("@id", newDoctor.Id);
-                cmd.Parameters.AddWithValue("@firstName", newDoctor.Id);
-                cmd.Parameters.AddWithValue("@middleName", newDoctor.Id);
-                cmd.Parameters.AddWithValue("@lastName", newDoctor.Id);
-                cmd.ExecuteNonQuery();
-                con.Close();
+                cmd.Parameters.AddWithValue("@firstName", newDoctor.FirstName);
+                cmd.Parameters.AddWithValue("@middleName", newDoctor.MiddleName);
+                cmd.Parameters.AddWithValue("@lastName", newDoctor.LastName);
+                try {
+                    cmd.ExecuteNonQuery();
+                } catch (MySqlException) {
+                    throw;
+                } finally {
+                    con.Close();
+                }
             }
             return newDoctor;
         }
@@ -52,8 +57,13 @@ namespace DesktopApplication.Model.Database {
                 cmd.Connection = con;
                 con.Open();
                 cmd.CommandText = $"DELETE FROM Doctor WHERE id = '{doctorId}'";
-                cmd.ExecuteNonQuery();
-                con.Close();
+                try {
+                    cmd.ExecuteNonQuery();
+                } catch (MySqlException) {
+                    throw;
+                } finally {
+                    con.Close();
+                }
             }
         }
 
@@ -62,7 +72,7 @@ namespace DesktopApplication.Model.Database {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
                 con.Open();
-                cmd.CommandText = "SELECT * From Doctor";
+                cmd.CommandText = "SELECT * FROM Doctor";
                 using (MySqlDataReader reader = cmd.ExecuteReader()) {
                     while (reader.Read()) doctors.Add(FillDoctorWithReaderData(reader));
                 }
@@ -76,10 +86,10 @@ namespace DesktopApplication.Model.Database {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
                 con.Open();
-                cmd.CommandText = $"SELECT * From Doctor WHERE id = '{doctorId}'";
+                cmd.CommandText = $"SELECT * FROM Doctor WHERE id = '{doctorId}'";
                 using (MySqlDataReader reader = cmd.ExecuteReader()) {
                     reader.Read();
-                    doctor = FillDoctorWithReaderData(reader);
+                    if (reader.HasRows) doctor = FillDoctorWithReaderData(reader);
                 }
                 con.Close();
             }
@@ -99,18 +109,20 @@ namespace DesktopApplication.Model.Database {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
                 con.Open();
-                cmd.CommandText = $"SELECT doctorId From DoctorPatientTreatment WHERE patientId = '{patientId}'";
+                cmd.CommandText = $"SELECT doctorId FROM DoctorPatientTreatment WHERE patientId = '{patientId}'";
+                StringBuilder sb = new StringBuilder();
                 using (MySqlDataReader reader = cmd.ExecuteReader()) {
-                    List<Guid> doctorIds = new List<Guid>();
-                    while (reader.Read()) doctorIds.Add(Guid.Parse(reader.GetString("doctorId")));
-                    StringBuilder sb = new StringBuilder();
-                    sb.Append("SELECT * From Doctor WHERE id IN (");
-                    for (int i = 0; i < doctorIds.Count; i++) {
-                        sb.Append($"'{doctorIds[i].ToString()}'");
-                        if (i < doctorIds.Count - 1) sb.Append(", ");
+                    List<Guid> ids = new List<Guid>();
+                    while (reader.Read()) ids.Add(reader.GetGuid("doctorId"));
+                    sb.Append("SELECT * FROM Doctor WHERE id IN (");
+                    for (int i = 0; i < ids.Count; i++) {
+                        sb.Append($"'{ids[i].ToString()}'");
+                        if (i < ids.Count - 1) sb.Append(", ");
                     }
                     sb.Append(")");
-                    cmd.CommandText = sb.ToString();
+                }
+                cmd.CommandText = sb.ToString();
+                using (MySqlDataReader reader = cmd.ExecuteReader()) {
                     while (reader.Read()) doctors.Add(FillDoctorWithReaderData(reader));
                 }
                 con.Close();
@@ -130,8 +142,13 @@ namespace DesktopApplication.Model.Database {
                 cmd.Parameters.AddWithValue("@firstName", doctor.FirstName);
                 cmd.Parameters.AddWithValue("@middleName", doctor.MiddleName);
                 cmd.Parameters.AddWithValue("@lastName", doctor.LastName);
-                cmd.ExecuteNonQuery();
-                con.Close();
+                try {
+                    cmd.ExecuteNonQuery();
+                } catch (MySqlException) {
+                    throw;
+                } finally {
+                    con.Close();
+                }
             }
         }
 
