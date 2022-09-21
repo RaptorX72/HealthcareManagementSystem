@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS Patient(
 	middleName VARCHAR(128)
 );
 
-CREATE TABLE IF NOT EXSISTS DoctorPatientTreatment(
+CREATE TABLE IF NOT EXISTS DoctorPatientTreatment(
 	id INTEGER AUTO_INCREMENT PRIMARY KEY,
 	doctorId CHAR(36),
 	patientId CHAR(36),
