@@ -13,20 +13,12 @@ namespace DesktopApplication.Model.Database {
 
         public MedicalRecord GetMedicalRecordOfPatient(Patient patient);
 
-        public void UpdateMedicalRecordById(Guid medicalRecordId, MedicalRecord MedicalRecord);
+        public void UpdateMedicalRecordById(Guid medicalRecordId, MedicalRecord medicalRecord);
 
-        public void UpdateMedicalRecord(MedicalRecord MedicalRecord);
-
-        public void UpdateMedicalRecordOfPatientById(Guid patientId, MedicalRecord MedicalRecord);
-
-        public void UpdateMedicalRecordOfPatient(Patient patient, MedicalRecord MedicalRecord);
+        public void UpdateMedicalRecord(MedicalRecord medicalRecord);
 
         public void DeleteMedicalRecordById(Guid medicalRecordId);
 
-        public void DeleteMedicalRecord(MedicalRecord MedicalRecord);
-
-        public void DeleteMedicalRecordOfPatientById(Guid patientId);
-
-        public void DeleteMedicalRecordOfPatient(Patient patient);
+        public void DeleteMedicalRecord(MedicalRecord medicalRecord);
     }
 }
