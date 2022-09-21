@@ -15,30 +15,9 @@ namespace DesktopApplication {
                 databaseName = "testdb"
             };
             DBHandler.SetDataBaseType(DataBaseType.MySQL, info);
-            try {
-                DBHandler.DB.User().AddUser(new User("foobar", "foobar@email.com", "1234"));
-            } catch (GenericDatabaseException ex) {
-                MessageBox.Show(ex.Message);
-            } catch (InvalidEmailException ex) {
-                MessageBox.Show(ex.Message);
-            }
-            User newUser = User.Empty;
-            try {
-                newUser = DBHandler.DB.User().LoginUser("foobar@email.com", "1234");
-            } catch (GenericDatabaseException ex) {
-                MessageBox.Show(ex.Message);
-            } catch (InvalidEmailException ex) {
-                MessageBox.Show(ex.Message);
-            } catch (InvalidPasswordException ex) {
-                MessageBox.Show(ex.Message);
-            }
-            newUser.UpdateEmail("foobar2@email.com");
-            newUser.UpdatePassword("QWERTZ");
-            try {
-                DBHandler.DB.User().UpdateUserById(newUser.Id, newUser);
-            } catch (GenericDatabaseException ex) {
-                MessageBox.Show(ex.Message);
-            }
+        }
+
+        private void buttonTest_Click(object sender, EventArgs e) {
             MessageBox.Show("Done");
         }
     }
