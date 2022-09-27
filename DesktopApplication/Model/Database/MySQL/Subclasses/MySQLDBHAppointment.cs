@@ -27,7 +27,7 @@ namespace DesktopApplication.Model.Database {
                 con.Open();
                 //check if guid already exists in database
                 while (true) {
-                    cmd.CommandText = $"SELECT Count(id) FROM Appointment WHERE id = '{appointment.Id}'";
+                    cmd.CommandText = $"SELECT COUNT(id) FROM Appointment WHERE id = '{appointment.Id}'";
                     //if yes, generate a new guid
                     if ((Int64)cmd.ExecuteScalar() == 0) break;
                     else newAppointment = new Appointment(newAppointment.Date, newAppointment.DoctorId, newAppointment.PatientId, newAppointment.Notes);
@@ -38,8 +38,13 @@ namespace DesktopApplication.Model.Database {
                 cmd.Parameters.AddWithValue("@doctorId", newAppointment.DoctorId);
                 cmd.Parameters.AddWithValue("@patientId", newAppointment.PatientId);
                 cmd.Parameters.AddWithValue("@note", newAppointment.Notes);
-                cmd.ExecuteNonQuery();
-                con.Close();
+                try {
+                    cmd.ExecuteNonQuery();
+                } catch (MySqlException) {
+                    throw;
+                } finally {
+                    con.Close();
+                }
             }
             return newAppointment;
         }
@@ -48,9 +53,14 @@ namespace DesktopApplication.Model.Database {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
                 con.Open();
-                cmd.CommandText = $"DELETE FROM Appointment WHERE appointmentDate = {date}";
-                cmd.ExecuteNonQuery();
-                con.Close();
+                cmd.CommandText = $"DELETE FROM Appointment WHERE appointmentDate = '{date.ToString(Globals.DateFormat)}'";
+                try {
+                    cmd.ExecuteNonQuery();
+                } catch (MySqlException) {
+                    throw;
+                } finally {
+                    con.Close();
+                }
             }
         }
 
@@ -63,8 +73,13 @@ namespace DesktopApplication.Model.Database {
                 cmd.Connection = con;
                 con.Open();
                 cmd.CommandText = $"DELETE FROM Appointment WHERE doctorId = '{doctorId}'";
-                cmd.ExecuteNonQuery();
-                con.Close();
+                try {
+                    cmd.ExecuteNonQuery();
+                } catch (MySqlException) {
+                    throw;
+                } finally {
+                    con.Close();
+                }
             }
         }
 
@@ -77,8 +92,13 @@ namespace DesktopApplication.Model.Database {
                 cmd.Connection = con;
                 con.Open();
                 cmd.CommandText = $"DELETE FROM Appointment WHERE patientId = '{patientId}'";
-                cmd.ExecuteNonQuery();
-                con.Close();
+                try {
+                    cmd.ExecuteNonQuery();
+                } catch (MySqlException) {
+                    throw;
+                } finally {
+                    con.Close();
+                }
             }
         }
 
@@ -95,8 +115,13 @@ namespace DesktopApplication.Model.Database {
                 cmd.Connection = con;
                 con.Open();
                 cmd.CommandText = $"DELETE FROM Appointment WHERE id = '{appointmentId}'";
-                cmd.ExecuteNonQuery();
-                con.Close();
+                try {
+                    cmd.ExecuteNonQuery();
+                } catch (MySqlException) {
+                    throw;
+                } finally {
+                    con.Close();
+                }
             }
         }
 
@@ -105,7 +130,7 @@ namespace DesktopApplication.Model.Database {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
                 con.Open();
-                cmd.CommandText = "SELECT * From Appointment";
+                cmd.CommandText = "SELECT * FROM Appointment";
                 using (MySqlDataReader reader = cmd.ExecuteReader()) {
                     while (reader.Read()) appointments.Add(FillAppointmentWithReaderData(reader));
                 }
@@ -119,7 +144,7 @@ namespace DesktopApplication.Model.Database {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
                 con.Open();
-                cmd.CommandText = $"SELECT * From Appointment WHERE appointmentDate = {date}";
+                cmd.CommandText = $"SELECT * FROM Appointment WHERE appointmentDate = '{date.ToString(Globals.DateFormat)}'";
                 using (MySqlDataReader reader = cmd.ExecuteReader()) {
                     while (reader.Read()) appointments.Add(FillAppointmentWithReaderData(reader));
                 }
@@ -137,7 +162,7 @@ namespace DesktopApplication.Model.Database {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
                 con.Open();
-                cmd.CommandText = $"SELECT * From Appointment WHERE doctorId = '{doctorId}'";
+                cmd.CommandText = $"SELECT * FROM Appointment WHERE doctorId = '{doctorId}'";
                 using (MySqlDataReader reader = cmd.ExecuteReader()) {
                     while (reader.Read()) appointments.Add(FillAppointmentWithReaderData(reader));
                 }
@@ -155,7 +180,7 @@ namespace DesktopApplication.Model.Database {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
                 con.Open();
-                cmd.CommandText = $"SELECT * From Appointment WHERE patientId = '{patientId}'";
+                cmd.CommandText = $"SELECT * FROM Appointment WHERE patientId = '{patientId}'";
                 using (MySqlDataReader reader = cmd.ExecuteReader()) {
                     while (reader.Read()) appointments.Add(FillAppointmentWithReaderData(reader));
                 }
@@ -173,10 +198,10 @@ namespace DesktopApplication.Model.Database {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
                 con.Open();
-                cmd.CommandText = $"SELECT * From User WHERE id = '{appointmentId}'";
+                cmd.CommandText = $"SELECT * FROM Appointment WHERE id = '{appointmentId}'";
                 using (MySqlDataReader reader = cmd.ExecuteReader()) {
                     reader.Read();
-                    appointment = FillAppointmentWithReaderData(reader);
+                    if (reader.HasRows) appointment = FillAppointmentWithReaderData(reader);
                 }
                 con.Close();
             }
@@ -200,8 +225,13 @@ namespace DesktopApplication.Model.Database {
                 cmd.Parameters.AddWithValue("@doctorId", appointment.DoctorId);
                 cmd.Parameters.AddWithValue("@patientId", appointment.PatientId);
                 cmd.Parameters.AddWithValue("@note", appointment.Notes);
-                cmd.ExecuteNonQuery();
-                con.Close();
+                try {
+                    cmd.ExecuteNonQuery();
+                } catch (MySqlException) {
+                    throw;
+                } finally {
+                    con.Close();
+                }
             }
         }
     }
