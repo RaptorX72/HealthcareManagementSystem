@@ -82,7 +82,7 @@ namespace DesktopApplication.Model.Database {
 
         public override List<Medication> GetAllMedicationsOfPatientById(Guid patientId) {
             List<Medication> medications = new List<Medication>();
-            List<Perscription> perscriptions = DBHandler.DB.Perscription().GetAllPerscriptionsByPatientId(patientId);
+            List<Perscription> perscriptions = DBHandler.Perscription.GetAllPerscriptionsByPatientId(patientId);
             foreach (Perscription perscription in perscriptions) medications.Add(perscription.Medication);
             return medications;
         }

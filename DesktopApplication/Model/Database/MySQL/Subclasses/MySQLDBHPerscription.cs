@@ -15,7 +15,7 @@ namespace DesktopApplication.Model.Database {
                 reader.GetGuid("id"),
                 reader.GetGuid("patientId"),
                 reader.GetGuid("doctorId"),
-                DBHandler.DB.Medication().GetMedicationById(reader.GetGuid("medicationId")),
+                DBHandler.Medication.GetMedicationById(reader.GetGuid("medicationId")),
                 reader.GetString("note")
             );
         }

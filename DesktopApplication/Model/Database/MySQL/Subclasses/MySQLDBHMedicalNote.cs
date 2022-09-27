@@ -53,7 +53,7 @@ namespace DesktopApplication.Model.Database {
         public override void DeleteAllMedicalNotesByDoctorId(Guid doctorId) {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                List<Appointment> appointments = DBHandler.DB.Appointment().GetAllAppointmentsByDoctorId(doctorId);
+                List<Appointment> appointments = DBHandler.Appointment.GetAllAppointmentsByDoctorId(doctorId);
                 StringBuilder sb = new StringBuilder();
                 sb.Append("DELETE FROM MedicalNote WHERE appointmentId IN (");
                 for (int i = 0; i < appointments.Count; i++) {
@@ -80,7 +80,7 @@ namespace DesktopApplication.Model.Database {
         public override void DeleteAllMedicalNotesOfPatientById(Guid patientId) {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                List<Appointment> appointments = DBHandler.DB.Appointment().GetAllAppointmentsByPatientId(patientId);
+                List<Appointment> appointments = DBHandler.Appointment.GetAllAppointmentsByPatientId(patientId);
                 StringBuilder sb = new StringBuilder();
                 sb.Append("DELETE FROM MedicalNote WHERE appointmentId IN (");
                 for (int i = 0; i < appointments.Count; i++) {
@@ -141,7 +141,7 @@ namespace DesktopApplication.Model.Database {
             List<MedicalNote> medicalNotes = new List<MedicalNote>();
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                List<Appointment> appointments = DBHandler.DB.Appointment().GetAllAppointmentsByDoctorId(doctorId);
+                List<Appointment> appointments = DBHandler.Appointment.GetAllAppointmentsByDoctorId(doctorId);
                 StringBuilder sb = new StringBuilder();
                 sb.Append("SELECT * FROM MedicalNote WHERE appointmentId IN (");
                 for (int i = 0; i < appointments.Count; i++) {
@@ -167,7 +167,7 @@ namespace DesktopApplication.Model.Database {
             List<MedicalNote> medicalNotes = new List<MedicalNote>();
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                List<Appointment> appointments = DBHandler.DB.Appointment().GetAllAppointmentsByPatientId(patientId);
+                List<Appointment> appointments = DBHandler.Appointment.GetAllAppointmentsByPatientId(patientId);
                 StringBuilder sb = new StringBuilder();
                 sb.Append("SELECT * FROM MedicalNote WHERE appointmentId IN (");
                 for (int i = 0; i < appointments.Count; i++) {
