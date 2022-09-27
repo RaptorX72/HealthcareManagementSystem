@@ -30,9 +30,7 @@ namespace DesktopApplication.Model.Management {
                     String.Empty,
                     BloodType.Empty,
                     0,
-                    0,
-                    null,
-                    null
+                    0
                 );
             }
         }
@@ -42,7 +40,7 @@ namespace DesktopApplication.Model.Management {
         public MedicalRecord(
             Guid id, Guid patientId, DateTime birthDate,
             string gender, BloodType bloodType, double height,
-            double weight, List<Perscription>? perscriptions, List<MedicalNote>? notes
+            double weight, List<Perscription>? perscriptions = null, List<MedicalNote>? notes = null
             ) {
             Id = id;
             PatientId = patientId;
@@ -58,7 +56,7 @@ namespace DesktopApplication.Model.Management {
         public MedicalRecord(
             Guid patientId, DateTime birthDate,
             string gender, BloodType bloodType, double height,
-            double weight, List<Perscription>? perscriptions, List<MedicalNote>? notes
+            double weight, List<Perscription>? perscriptions = null, List<MedicalNote>? notes = null
             ) {
             Id = Guid.NewGuid();
             PatientId = patientId;

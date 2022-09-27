@@ -17,25 +17,26 @@ namespace DesktopApplication.Model.Database {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = bloodCon;
                 cmd.CommandText = $"SELECT * FROM BloodType WHERE id = {id}";
-                con.Open();
+                bloodCon.Open();
                 using (MySqlDataReader reader = cmd.ExecuteReader()) {
                     reader.Read();
-                    bloodType = new BloodType(reader.GetString("protein"), reader.GetBoolean("rh"));
+                    if (reader.HasRows) bloodType = new BloodType(reader.GetString("protein"), reader.GetBoolean("rh"));
                 }
             }
-            con.Close();
+            bloodCon.Close();
             return bloodType;
         }
 
         private int GetIdOfBloodType(BloodType type) {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = bloodCon;
-                cmd.CommandText = $"SELECT id FROM BloodType WHERE antigen = '{type.BloodAntigen}' AND rh = {type.Rh}";
-                con.Open();
+                cmd.CommandText = $"SELECT id FROM BloodType WHERE protein = '{type.BloodAntigen}' AND rh = {type.Rh}";
+                bloodCon.Open();
                 using (MySqlDataReader reader = cmd.ExecuteReader()) {
                     reader.Read();
-                    con.Close();
-                    return reader.GetInt32("id");
+                    int res = reader.GetInt32("id");
+                    bloodCon.Close();
+                    return res;
                 }
             }
         }
@@ -61,7 +62,7 @@ namespace DesktopApplication.Model.Database {
                 con.Open();
                 //check if guid already exists in database
                 while (true) {
-                    cmd.CommandText = $"SELECT Count(id) FROM MedicalRecord WHERE id = '{newMedicalRecord.Id}'";
+                    cmd.CommandText = $"SELECT COUNT(id) FROM MedicalRecord WHERE id = '{newMedicalRecord.Id}'";
                     //if yes, generate a new guid
                     if ((Int64)cmd.ExecuteScalar() == 0) break;
                     else newMedicalRecord = new MedicalRecord(
@@ -83,8 +84,13 @@ namespace DesktopApplication.Model.Database {
                 cmd.Parameters.AddWithValue("@bloodTypeId", GetIdOfBloodType(newMedicalRecord.BloodType));
                 cmd.Parameters.AddWithValue("@height", newMedicalRecord.Height);
                 cmd.Parameters.AddWithValue("@weight", newMedicalRecord.Weight);
-                cmd.ExecuteNonQuery();
-                con.Close();
+                try {
+                    cmd.ExecuteNonQuery();
+                } catch (MySqlException) {
+                    throw;
+                } finally {
+                    con.Close();
+                }
             }
             return newMedicalRecord;
         }
@@ -98,8 +104,13 @@ namespace DesktopApplication.Model.Database {
                 cmd.Connection = con;
                 con.Open();
                 cmd.CommandText = $"DELETE FROM MedicalRecord WHERE id = '{medicalRecordId}'";
-                cmd.ExecuteNonQuery();
-                con.Close();
+                try {
+                    cmd.ExecuteNonQuery();
+                } catch (MySqlException) {
+                    throw;
+                } finally {
+                    con.Close();
+                }
             }
         }
 
@@ -125,7 +136,7 @@ namespace DesktopApplication.Model.Database {
                 cmd.CommandText = $"SELECT * FROM MedicalRecord WHERE id = '{medicalRecordId}'";
                 using (MySqlDataReader reader = cmd.ExecuteReader()) {
                     reader.Read();
-                    medicalRecord = FillMedicalRecordWithReaderData(reader);
+                    if (reader.HasRows) medicalRecord = FillMedicalRecordWithReaderData(reader);
                 }
                 con.Close();
             }
@@ -144,7 +155,7 @@ namespace DesktopApplication.Model.Database {
                 cmd.CommandText = $"SELECT * FROM MedicalRecord WHERE patientId = '{patientId}'";
                 using (MySqlDataReader reader = cmd.ExecuteReader()) {
                     reader.Read();
-                    medicalRecord = FillMedicalRecordWithReaderData(reader);
+                    if (reader.HasRows) medicalRecord = FillMedicalRecordWithReaderData(reader);
                 }
                 con.Close();
             }
@@ -166,8 +177,13 @@ namespace DesktopApplication.Model.Database {
                 cmd.Parameters.AddWithValue("@bloodTypeId", GetIdOfBloodType(medicalRecord.BloodType));
                 cmd.Parameters.AddWithValue("@height", medicalRecord.Height);
                 cmd.Parameters.AddWithValue("@weight", medicalRecord.Weight);
-                cmd.ExecuteNonQuery();
-                con.Close();
+                try {
+                    cmd.ExecuteNonQuery();
+                } catch (MySqlException) {
+                    throw;
+                } finally {
+                    con.Close();
+                }
             }
         }
     }

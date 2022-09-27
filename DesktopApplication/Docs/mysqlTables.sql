@@ -131,3 +131,13 @@ CREATE TABLE IF NOT EXISTS Surgery(
 	FOREIGN KEY (outcomeId) REFERENCES SurgeryOutcome(id)
 );
 /*TODO: Create medical test result table and connect*/
+
+INSERT INTO BloodType (protein, rh) VALUES
+("A", true),
+("A", false),
+("B", true),
+("B", false),
+("AB", true),
+("AB", false),
+("O", true),
+("O", false);
