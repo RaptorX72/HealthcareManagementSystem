@@ -18,7 +18,7 @@ namespace DesktopApplication.Model.Database {
                 reader.GetGuid("patientId"),
                 reader.GetDateTime("surgeryDate"),
                 reader.GetString("note"),
-                (SurgeryOutcome)reader.GetInt32("outcomeId")
+                (SurgeryOutcome)(reader.GetInt32("outcomeId") - 1)
             );
         }
 
@@ -29,7 +29,7 @@ namespace DesktopApplication.Model.Database {
                 con.Open();
                 //check if guid already exists in database
                 while (true) {
-                    cmd.CommandText = $"SELECT Count(id) FROM Surgery WHERE id = '{newSurgery.Id}'";
+                    cmd.CommandText = $"SELECT COUNT(id) FROM Surgery WHERE id = '{newSurgery.Id}'";
                     //if yes, generate a new guid
                     if ((Int64)cmd.ExecuteScalar() == 0) break;
                     else newSurgery = new Surgery(newSurgery.AppointerDoctorId, newSurgery.SurgeonDoctorId, newSurgery.PatientId, newSurgery.Date, newSurgery.Notes, newSurgery.Outcome);
@@ -41,9 +41,14 @@ namespace DesktopApplication.Model.Database {
                 cmd.Parameters.AddWithValue("@patientId", newSurgery.PatientId);
                 cmd.Parameters.AddWithValue("@surgeryDate", newSurgery.Date);
                 cmd.Parameters.AddWithValue("@note", newSurgery.Notes);
-                cmd.Parameters.AddWithValue("@outcomeId", (int)newSurgery.Outcome);
-                cmd.ExecuteNonQuery();
-                con.Close();
+                cmd.Parameters.AddWithValue("@outcomeId", (int)newSurgery.Outcome + 1);
+                try {
+                    cmd.ExecuteNonQuery();
+                } catch (MySqlException) {
+                    throw;
+                } finally {
+                    con.Close();
+                }
             }
             return newSurgery;
         }
@@ -57,8 +62,13 @@ namespace DesktopApplication.Model.Database {
                 cmd.Connection = con;
                 con.Open();
                 cmd.CommandText = $"DELETE FROM Surgery WHERE appointerId = '{doctorId}'";
-                cmd.ExecuteNonQuery();
-                con.Close();
+                try {
+                    cmd.ExecuteNonQuery();
+                } catch (MySqlException) {
+                    throw;
+                } finally {
+                    con.Close();
+                }
             }
         }
 
@@ -66,9 +76,14 @@ namespace DesktopApplication.Model.Database {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
                 con.Open();
-                cmd.CommandText = $"DELETE FROM Surgery WHERE surgeryDate = {date}";
-                cmd.ExecuteNonQuery();
-                con.Close();
+                cmd.CommandText = $"DELETE FROM Surgery WHERE surgeryDate = '{date.ToString(Globals.DateFormat)}'";
+                try {
+                    cmd.ExecuteNonQuery();
+                } catch (MySqlException) {
+                    throw;
+                } finally {
+                    con.Close();
+                }
             }
         }
 
@@ -76,9 +91,14 @@ namespace DesktopApplication.Model.Database {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
                 con.Open();
-                cmd.CommandText = $"DELETE FROM Surgery WHERE outcomeId = '{(int)outcome}'";
-                cmd.ExecuteNonQuery();
-                con.Close();
+                cmd.CommandText = $"DELETE FROM Surgery WHERE outcomeId = {(int)outcome + 1}";
+                try {
+                    cmd.ExecuteNonQuery();
+                } catch (MySqlException) {
+                    throw;
+                } finally {
+                    con.Close();
+                }
             }
         }
 
@@ -91,8 +111,13 @@ namespace DesktopApplication.Model.Database {
                 cmd.Connection = con;
                 con.Open();
                 cmd.CommandText = $"DELETE FROM Surgery WHERE surgeonId = '{doctorId}'";
-                cmd.ExecuteNonQuery();
-                con.Close();
+                try {
+                    cmd.ExecuteNonQuery();
+                } catch (MySqlException) {
+                    throw;
+                } finally {
+                    con.Close();
+                }
             }
         }
 
@@ -105,8 +130,13 @@ namespace DesktopApplication.Model.Database {
                 cmd.Connection = con;
                 con.Open();
                 cmd.CommandText = $"DELETE FROM Surgery WHERE patientId = '{patientId}'";
-                cmd.ExecuteNonQuery();
-                con.Close();
+                try {
+                    cmd.ExecuteNonQuery();
+                } catch (MySqlException) {
+                    throw;
+                } finally {
+                    con.Close();
+                }
             }
         }
 
@@ -119,8 +149,13 @@ namespace DesktopApplication.Model.Database {
                 cmd.Connection = con;
                 con.Open();
                 cmd.CommandText = $"DELETE FROM Surgery WHERE id = '{surgeryId}'";
-                cmd.ExecuteNonQuery();
-                con.Close();
+                try {
+                    cmd.ExecuteNonQuery();
+                } catch (MySqlException) {
+                    throw;
+                } finally {
+                    con.Close();
+                }
             }
         }
 
@@ -129,7 +164,7 @@ namespace DesktopApplication.Model.Database {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
                 con.Open();
-                cmd.CommandText = "SELECT * From Surgery";
+                cmd.CommandText = "SELECT * FROM Surgery";
                 using (MySqlDataReader reader = cmd.ExecuteReader()) {
                     while (reader.Read()) surgeries.Add(FillSurgeryWithReaderData(reader));
                 }
@@ -147,7 +182,7 @@ namespace DesktopApplication.Model.Database {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
                 con.Open();
-                cmd.CommandText = $"SELECT * From Surgery WHERE appointerId = '{doctorId}'";
+                cmd.CommandText = $"SELECT * FROM Surgery WHERE appointerId = '{doctorId}'";
                 using (MySqlDataReader reader = cmd.ExecuteReader()) {
                     while (reader.Read()) surgeries.Add(FillSurgeryWithReaderData(reader));
                 }
@@ -161,7 +196,7 @@ namespace DesktopApplication.Model.Database {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
                 con.Open();
-                cmd.CommandText = $"SELECT * From Surgery WHERE surgeryDate = {date}";
+                cmd.CommandText = $"SELECT * FROM Surgery WHERE surgeryDate = '{date.ToString(Globals.DateFormat)}'";
                 using (MySqlDataReader reader = cmd.ExecuteReader()) {
                     while (reader.Read()) surgeries.Add(FillSurgeryWithReaderData(reader));
                 }
@@ -175,7 +210,7 @@ namespace DesktopApplication.Model.Database {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
                 con.Open();
-                cmd.CommandText = $"SELECT * From Surgery WHERE outcomeId = '{(int)outcome}'";
+                cmd.CommandText = $"SELECT * FROM Surgery WHERE outcomeId = {(int)outcome + 1}";
                 using (MySqlDataReader reader = cmd.ExecuteReader()) {
                     while (reader.Read()) surgeries.Add(FillSurgeryWithReaderData(reader));
                 }
@@ -193,7 +228,7 @@ namespace DesktopApplication.Model.Database {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
                 con.Open();
-                cmd.CommandText = $"SELECT * From Surgery WHERE surgeonId = '{doctorId}'";
+                cmd.CommandText = $"SELECT * FROM Surgery WHERE surgeonId = '{doctorId}'";
                 using (MySqlDataReader reader = cmd.ExecuteReader()) {
                     while (reader.Read()) surgeries.Add(FillSurgeryWithReaderData(reader));
                 }
@@ -211,7 +246,7 @@ namespace DesktopApplication.Model.Database {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
                 con.Open();
-                cmd.CommandText = $"SELECT * From Surgery WHERE patientId = '{patientId}'";
+                cmd.CommandText = $"SELECT * FROM Surgery WHERE patientId = '{patientId}'";
                 using (MySqlDataReader reader = cmd.ExecuteReader()) {
                     while (reader.Read()) surgeries.Add(FillSurgeryWithReaderData(reader));
                 }
@@ -225,10 +260,10 @@ namespace DesktopApplication.Model.Database {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
                 con.Open();
-                cmd.CommandText = $"SELECT * From Surgery WHERE id = '{surgeryId}'";
+                cmd.CommandText = $"SELECT * FROM Surgery WHERE id = '{surgeryId}'";
                 using (MySqlDataReader reader = cmd.ExecuteReader()) {
                     reader.Read();
-                    surgery = FillSurgeryWithReaderData(reader);
+                    if (reader.HasRows) surgery = FillSurgeryWithReaderData(reader);
                 }
                 con.Close();
             }
@@ -253,9 +288,14 @@ namespace DesktopApplication.Model.Database {
                 cmd.Parameters.AddWithValue("@patientId", surgery.PatientId);
                 cmd.Parameters.AddWithValue("@surgeryDate", surgery.Date);
                 cmd.Parameters.AddWithValue("@note", surgery.Notes);
-                cmd.Parameters.AddWithValue("@outcomeId", (int)surgery.Outcome);
-                cmd.ExecuteNonQuery();
-                con.Close();
+                cmd.Parameters.AddWithValue("@outcomeId", (int)surgery.Outcome + 1);
+                try {
+                    cmd.ExecuteNonQuery();
+                } catch (MySqlException) {
+                    throw;
+                } finally {
+                    con.Close();
+                }
             }
         }
     }

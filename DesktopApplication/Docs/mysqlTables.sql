@@ -147,3 +147,6 @@ INSERT INTO MedicalTestType (name) VALUES
 
 INSERT INTO UnitOfMeasurement (name) VALUES
 ("kg"), ("g"),("mg");
+
+INSERT INTO SurgeryOutcome (name) VALUES
+("Not performed"), ("Success"),("PartialSuccess"), ("Failed");
