@@ -17,7 +17,7 @@ namespace DesktopApplication.Model.Database {
                 reader.GetGuid("id"),
                 reader.GetGuid("doctorId"),
                 reader.GetGuid("patientId"),
-                (MedicalTestType)reader.GetInt32("testTypeId"),
+                (MedicalTestType)(reader.GetInt32("testTypeId") - 1),
                 MedicalTestResult.Empty
             );
         }
@@ -29,7 +29,7 @@ namespace DesktopApplication.Model.Database {
                 con.Open();
                 //check if guid already exists in database
                 while (true) {
-                    cmd.CommandText = $"SELECT Count(id) FROM MedicalTest WHERE id = '{newMedicalTest.Id}'";
+                    cmd.CommandText = $"SELECT COUNT(id) FROM MedicalTest WHERE id = '{newMedicalTest.Id}'";
                     //if yes, generate a new guid
                     if ((Int64)cmd.ExecuteScalar() == 0) break;
                     else newMedicalTest = new MedicalTest(newMedicalTest.DoctorId, newMedicalTest.PatientId, newMedicalTest.MedicalTestType);
@@ -38,10 +38,15 @@ namespace DesktopApplication.Model.Database {
                 cmd.Parameters.AddWithValue("@id", newMedicalTest.Id);
                 cmd.Parameters.AddWithValue("@doctorId", newMedicalTest.DoctorId);
                 cmd.Parameters.AddWithValue("@patientId", newMedicalTest.PatientId);
-                cmd.Parameters.AddWithValue("@testTypeId", (int)newMedicalTest.MedicalTestType);
+                cmd.Parameters.AddWithValue("@testTypeId", (int)newMedicalTest.MedicalTestType + 1);
                 //TODO: Add result as well if exists
-                cmd.ExecuteNonQuery();
-                con.Close();
+                try {
+                    cmd.ExecuteNonQuery();
+                } catch (MySqlException) {
+                    throw;
+                } finally {
+                    con.Close();
+                }
             }
             return newMedicalTest;
         }
@@ -55,8 +60,13 @@ namespace DesktopApplication.Model.Database {
                 cmd.Connection = con;
                 con.Open();
                 cmd.CommandText = $"DELETE FROM MedicalTest WHERE doctorId = '{doctorId}'";
-                cmd.ExecuteNonQuery();
-                con.Close();
+                try {
+                    cmd.ExecuteNonQuery();
+                } catch (MySqlException) {
+                    throw;
+                } finally {
+                    con.Close();
+                }
             }
         }
 
@@ -64,9 +74,14 @@ namespace DesktopApplication.Model.Database {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
                 con.Open();
-                cmd.CommandText = $"DELETE FROM MedicalTest WHERE testTypeId = '{(int)medicalTestType}'";
-                cmd.ExecuteNonQuery();
-                con.Close();
+                cmd.CommandText = $"DELETE FROM MedicalTest WHERE testTypeId = '{(int)medicalTestType + 1}'";
+                try {
+                    cmd.ExecuteNonQuery();
+                } catch (MySqlException) {
+                    throw;
+                } finally {
+                    con.Close();
+                }
             }
         }
 
@@ -79,8 +94,13 @@ namespace DesktopApplication.Model.Database {
                 cmd.Connection = con;
                 con.Open();
                 cmd.CommandText = $"DELETE FROM MedicalTest WHERE doctorId = '{patientId}'";
-                cmd.ExecuteNonQuery();
-                con.Close();
+                try {
+                    cmd.ExecuteNonQuery();
+                } catch (MySqlException) {
+                    throw;
+                } finally {
+                    con.Close();
+                }
             }
         }
 
@@ -93,8 +113,13 @@ namespace DesktopApplication.Model.Database {
                 cmd.Connection = con;
                 con.Open();
                 cmd.CommandText = $"DELETE FROM MedicalTest WHERE id = '{medicalTestId}'";
-                cmd.ExecuteNonQuery();
-                con.Close();
+                try {
+                    cmd.ExecuteNonQuery();
+                } catch (MySqlException) {
+                    throw;
+                } finally {
+                    con.Close();
+                }
             }
         }
 
@@ -135,7 +160,7 @@ namespace DesktopApplication.Model.Database {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
                 con.Open();
-                cmd.CommandText = $"SELECT * FROM MedicalTest WHERE testTypeId = {(int)medicalTestType}";
+                cmd.CommandText = $"SELECT * FROM MedicalTest WHERE testTypeId = {(int)medicalTestType + 1}";
                 using (MySqlDataReader reader = cmd.ExecuteReader()) {
                     while (reader.Read()) medicalTests.Add(FillMedicalTestWithReaderData(reader));
                 }
@@ -170,7 +195,7 @@ namespace DesktopApplication.Model.Database {
                 cmd.CommandText = $"SELECT * FROM MedicalTest WHERE id = '{medicalTestId}'";
                 using (MySqlDataReader reader = cmd.ExecuteReader()) {
                     reader.Read();
-                    medicalTest = FillMedicalTestWithReaderData(reader);
+                    if (reader.HasRows) medicalTest = FillMedicalTestWithReaderData(reader);
                 }
                 con.Close();
             }
@@ -188,9 +213,14 @@ namespace DesktopApplication.Model.Database {
                 cmd.CommandText = $"UPDATE MedicalTest SET doctorId = @doctorId, patientId = @patientId, testTypeId = @testTypeId WHERE id = '{medicalTestId}'";
                 cmd.Parameters.AddWithValue("@doctorId", medicalTest.DoctorId);
                 cmd.Parameters.AddWithValue("@patientId", medicalTest.PatientId);
-                cmd.Parameters.AddWithValue("@testTypeId", (int)medicalTest.MedicalTestType);
-                cmd.ExecuteNonQuery();
-                con.Close();
+                cmd.Parameters.AddWithValue("@testTypeId", (int)medicalTest.MedicalTestType + 1);
+                try {
+                    cmd.ExecuteNonQuery();
+                } catch (MySqlException) {
+                    throw;
+                } finally {
+                    con.Close();
+                }
             }
         }
 

@@ -141,3 +141,6 @@ INSERT INTO BloodType (protein, rh) VALUES
 ("AB", false),
 ("O", true),
 ("O", false);
+
+INSERT INTO MedicalTestType (name) VALUES
+("Bloodtest"), ("Pathology");
