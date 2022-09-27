@@ -74,7 +74,7 @@ namespace DesktopApplication.Model.Database {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
                 con.Open();
-                cmd.CommandText = $"DELETE FROM MedicalTest WHERE testTypeId = '{(int)medicalTestType + 1}'";
+                cmd.CommandText = $"DELETE FROM MedicalTest WHERE testTypeId = {(int)medicalTestType + 1}";
                 try {
                     cmd.ExecuteNonQuery();
                 } catch (MySqlException) {
