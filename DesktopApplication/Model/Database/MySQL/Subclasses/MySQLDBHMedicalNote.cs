@@ -26,7 +26,7 @@ namespace DesktopApplication.Model.Database {
                 con.Open();
                 //check if guid already exists in database
                 while (true) {
-                    cmd.CommandText = $"SELECT Count(id) FROM MedicalNote WHERE id = '{newMedicalNote.Id}'";
+                    cmd.CommandText = $"SELECT COUNT(id) FROM MedicalNote WHERE id = '{newMedicalNote.Id}'";
                     //if yes, generate a new guid
                     if ((Int64)cmd.ExecuteScalar() == 0) break;
                     else newMedicalNote = new MedicalNote(newMedicalNote.AppointmentId, newMedicalNote.Note);
@@ -35,8 +35,13 @@ namespace DesktopApplication.Model.Database {
                 cmd.Parameters.AddWithValue("@id", newMedicalNote.Id);
                 cmd.Parameters.AddWithValue("@appointmentId", newMedicalNote.AppointmentId);
                 cmd.Parameters.AddWithValue("@note", newMedicalNote.Note);
-                cmd.ExecuteNonQuery();
-                con.Close();
+                try {
+                    cmd.ExecuteNonQuery();
+                } catch (MySqlException) {
+                    throw;
+                } finally {
+                    con.Close();
+                }
             }
             return newMedicalNote;
         }
@@ -58,8 +63,13 @@ namespace DesktopApplication.Model.Database {
                 sb.Append(")");
                 cmd.CommandText = sb.ToString();
                 con.Open();
-                cmd.ExecuteNonQuery();
-                con.Close();
+                try {
+                    cmd.ExecuteNonQuery();
+                } catch (MySqlException) {
+                    throw;
+                } finally {
+                    con.Close();
+                }
             }
         }
 
@@ -80,8 +90,13 @@ namespace DesktopApplication.Model.Database {
                 sb.Append(")");
                 cmd.CommandText = sb.ToString();
                 con.Open();
-                cmd.ExecuteNonQuery();
-                con.Close();
+                try {
+                    cmd.ExecuteNonQuery();
+                } catch (MySqlException) {
+                    throw;
+                } finally {
+                    con.Close();
+                }
             }
         }
 
@@ -94,8 +109,13 @@ namespace DesktopApplication.Model.Database {
                 cmd.Connection = con;
                 con.Open();
                 cmd.CommandText = $"DELETE FROM MedicalNote WHERE id = '{medicalNoteId}'";
-                cmd.ExecuteNonQuery();
-                con.Close();
+                try {
+                    cmd.ExecuteNonQuery();
+                } catch (MySqlException) {
+                    throw;
+                } finally {
+                    con.Close();
+                }
             }
         }
 
@@ -104,7 +124,7 @@ namespace DesktopApplication.Model.Database {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
                 con.Open();
-                cmd.CommandText = "SELECT * From MedicalNote";
+                cmd.CommandText = "SELECT * FROM MedicalNote";
                 using (MySqlDataReader reader = cmd.ExecuteReader()) {
                     while (reader.Read()) medicalNotes.Add(FillMedicalNoteWithReaderData(reader));
                 }
@@ -170,7 +190,18 @@ namespace DesktopApplication.Model.Database {
         }
 
         public override MedicalNote GetMedicalNoteByAppointmentId(Guid appointmentId) {
-            throw new NotImplementedException();
+            MedicalNote medicalNote = MedicalNote.Empty;
+            using (MySqlCommand cmd = new MySqlCommand()) {
+                cmd.Connection = con;
+                con.Open();
+                cmd.CommandText = $"SELECT * FROM MedicalNote WHERE appointmentId = '{appointmentId}'";
+                using (MySqlDataReader reader = cmd.ExecuteReader()) {
+                    reader.Read();
+                    if (reader.HasRows) medicalNote = FillMedicalNoteWithReaderData(reader);
+                }
+                con.Close();
+            }
+            return medicalNote;
         }
 
         public override MedicalNote GetMedicalNoteById(Guid medicalNoteId) {
@@ -178,10 +209,10 @@ namespace DesktopApplication.Model.Database {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
                 con.Open();
-                cmd.CommandText = $"SELECT * From MedicalNote WHERE id = '{medicalNoteId}'";
+                cmd.CommandText = $"SELECT * FROM MedicalNote WHERE id = '{medicalNoteId}'";
                 using (MySqlDataReader reader = cmd.ExecuteReader()) {
                     reader.Read();
-                    medicalNote = FillMedicalNoteWithReaderData(reader);
+                    if (reader.HasRows) medicalNote = FillMedicalNoteWithReaderData(reader);
                 }
                 con.Close();
             }
@@ -199,8 +230,13 @@ namespace DesktopApplication.Model.Database {
                 cmd.CommandText = $"UPDATE MedicalNote SET appointmentId = @appointmentId, note = @note WHERE id = '{medicalNoteId}'";
                 cmd.Parameters.AddWithValue("@appointerId", medicalNote.AppointmentId);
                 cmd.Parameters.AddWithValue("@note", medicalNote.Note);
-                cmd.ExecuteNonQuery();
-                con.Close();
+                try {
+                    cmd.ExecuteNonQuery();
+                } catch (MySqlException) {
+                    throw;
+                } finally {
+                    con.Close();
+                }
             }
         }
 
