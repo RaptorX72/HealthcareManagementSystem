@@ -22,9 +22,9 @@ namespace DesktopApplication.Model.Database {
 
         public List<Perscription> GetAllPerscriptionsByDoctor(Doctor doctor);
 
-        public List<Perscription> GetAllPerscriptionsByPatientId(Guid patientId);
+        public List<Perscription> GetAllPerscriptionsOfPatientId(Guid patientId);
 
-        public List<Perscription> GetAllPerscriptionsByPatient(Patient patient);
+        public List<Perscription> GetAllPerscriptionsOfPatient(Patient patient);
         #endregion
 
         #region UpdateAll
@@ -36,9 +36,9 @@ namespace DesktopApplication.Model.Database {
 
         public void DeleteAllPerscriptionsByDoctor(Doctor doctor);
 
-        public void DeleteAllPerscriptionsByPatientId(Guid patientId);
+        public void DeleteAllPerscriptionsOfPatientId(Guid patientId);
 
-        public void DeleteAllPerscriptionsByPatient(Patient patient);
+        public void DeleteAllPerscriptionsOfPatient(Patient patient);
         #endregion
     }
 }

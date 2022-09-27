@@ -144,3 +144,6 @@ INSERT INTO BloodType (protein, rh) VALUES
 
 INSERT INTO MedicalTestType (name) VALUES
 ("Bloodtest"), ("Pathology");
+
+INSERT INTO UnitOfMeasurement (name) VALUES
+("kg"), ("g"),("mg");

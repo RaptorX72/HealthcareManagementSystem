@@ -50,7 +50,7 @@ namespace DesktopApplication.Model.Database {
                 GetBloodTypeById(reader.GetInt32("bloodTypeId")),
                 reader.GetDouble("height"),
                 reader.GetDouble("weight"),
-                DBHandler.Perscription.GetAllPerscriptionsByPatientId(reader.GetGuid("patientId")),
+                DBHandler.Perscription.GetAllPerscriptionsOfPatientId(reader.GetGuid("patientId")),
                 DBHandler.MedicalNote.GetAllMedicalNotesOfPatientId(reader.GetGuid("patientId"))
             );
         }

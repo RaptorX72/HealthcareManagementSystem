@@ -19,7 +19,7 @@ namespace DesktopApplication.Model.Database {
                 reader.GetString("mainIngredient"),
                 reader.GetDouble("dosage"),
                 reader.GetDouble("size"),
-                (UnitOfMeasurement)reader.GetInt32("unitOfMeasurement")
+                (UnitOfMeasurement)(reader.GetInt32("unitOfMeasurementId") - 1)
             );
         }
 
@@ -30,20 +30,25 @@ namespace DesktopApplication.Model.Database {
                 con.Open();
                 //check if guid already exists in database
                 while (true) {
-                    cmd.CommandText = $"SELECT Count(id) FROM Medication WHERE id = '{medication.Id}'";
+                    cmd.CommandText = $"SELECT COUNT(id) FROM Medication WHERE id = '{medication.Id}'";
                     //if yes, generate a new guid
                     if ((Int64)cmd.ExecuteScalar() == 0) break;
                     else newMedication = new Medication(newMedication.Name, newMedication.MainIngedient, newMedication.Dosage, newMedication.Size, newMedication.UnitOfMeasurement);
                 }
-                cmd.CommandText = "INSERT INTO Medication (id, name, mainIngredient, dosage, size, uniOfMeasurementId) VALUES (@id, @name, @mainIngredient, @dosage, @size, @unitOfMeasurementId)";
+                cmd.CommandText = "INSERT INTO Medication (id, name, mainIngredient, dosage, size, unitOfMeasurementId) VALUES (@id, @name, @mainIngredient, @dosage, @size, @unitOfMeasurementId)";
                 cmd.Parameters.AddWithValue("@id", newMedication.Id);
                 cmd.Parameters.AddWithValue("@name", newMedication.Name);
                 cmd.Parameters.AddWithValue("@mainIngredient", newMedication.MainIngedient);
                 cmd.Parameters.AddWithValue("@dosage", newMedication.Dosage);
                 cmd.Parameters.AddWithValue("@size", newMedication.Size);
-                cmd.Parameters.AddWithValue("@unitOfMeasurementId", newMedication.UnitOfMeasurement);
-                cmd.ExecuteNonQuery();
-                con.Close();
+                cmd.Parameters.AddWithValue("@unitOfMeasurementId", newMedication.UnitOfMeasurement + 1);
+                try {
+                    cmd.ExecuteNonQuery();
+                } catch (MySqlException) {
+                    throw;
+                } finally {
+                    con.Close();
+                }
             }
             return newMedication;
         }
@@ -57,8 +62,13 @@ namespace DesktopApplication.Model.Database {
                 cmd.Connection = con;
                 con.Open();
                 cmd.CommandText = $"DELETE FROM Medication WHERE id = '{medicationId}'";
-                cmd.ExecuteNonQuery();
-                con.Close();
+                try {
+                    cmd.ExecuteNonQuery();
+                } catch (MySqlException) {
+                    throw;
+                } finally {
+                    con.Close();
+                }
             }
         }
 
@@ -82,7 +92,7 @@ namespace DesktopApplication.Model.Database {
 
         public override List<Medication> GetAllMedicationsOfPatientById(Guid patientId) {
             List<Medication> medications = new List<Medication>();
-            List<Perscription> perscriptions = DBHandler.Perscription.GetAllPerscriptionsByPatientId(patientId);
+            List<Perscription> perscriptions = DBHandler.Perscription.GetAllPerscriptionsOfPatientId(patientId);
             foreach (Perscription perscription in perscriptions) medications.Add(perscription.Medication);
             return medications;
         }
@@ -95,7 +105,7 @@ namespace DesktopApplication.Model.Database {
                 cmd.CommandText = $"SELECT * FROM Medication WHERE id = '{medicationId}'";
                 using (MySqlDataReader reader = cmd.ExecuteReader()) {
                     reader.Read();
-                    medication = FillMedicationWithReaderData(reader);
+                    if (reader.HasRows) medication = FillMedicationWithReaderData(reader);
                 }
                 con.Close();
             }
@@ -115,9 +125,14 @@ namespace DesktopApplication.Model.Database {
                 cmd.Parameters.AddWithValue("@mainIngredient", medication.MainIngedient);
                 cmd.Parameters.AddWithValue("@dosage", medication.Dosage);
                 cmd.Parameters.AddWithValue("@size", medication.Size);
-                cmd.Parameters.AddWithValue("@unitOfMeasurementId", medication.UnitOfMeasurement);
-                cmd.ExecuteNonQuery();
-                con.Close();
+                cmd.Parameters.AddWithValue("@unitOfMeasurementId", medication.UnitOfMeasurement + 1);
+                try {
+                    cmd.ExecuteNonQuery();
+                } catch (MySqlException) {
+                    throw;
+                } finally {
+                    con.Close();
+                }
             }
         }
     }
