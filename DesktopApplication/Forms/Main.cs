@@ -1,18 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using DesktopApplication.Model;
+using DesktopApplication.Model.Database;
+using DesktopApplication.Model.Management;
 
 namespace DesktopApplication {
     public partial class Main : Form {
+        private User user = User.Empty;
+
         public Main() {
             InitializeComponent();
-            flowLayoutPanelMain.Controls.Add(new LoginUC());
+
+            //dummy code for testing
+            DBHandler.SetDataBaseType(DataBaseType.MySQL,
+                new DBConnectionInfo() {
+                    address = "localhost",
+                    databaseName = "testdb",
+                    password = "",
+                    username = "root"
+                }
+            );
+            flowLayoutPanelMain.Controls.Add(new LoginUC(this));
+
+        }
+
+        public void SetUser(User user) {
+            this.user = user;
         }
     }
 }

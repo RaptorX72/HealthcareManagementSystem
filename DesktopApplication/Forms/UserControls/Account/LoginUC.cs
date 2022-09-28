@@ -1,8 +1,9 @@
-﻿using DesktopApplication.Model.Database;
+﻿using DesktopApplication.Model;
+using DesktopApplication.Model.Database;
+using DesktopApplication.Model.Management;
 
 namespace DesktopApplication {
     public partial class LoginUC : UserControl {
-
         private enum PasswordStatus {
             TooShort,
             NoLowercase,
@@ -12,22 +13,16 @@ namespace DesktopApplication {
             Correct
         }
 
-        public LoginUC() {
+        private Main parentForm;
+
+        public LoginUC(Main parentForm) {
+            this.parentForm = parentForm;
             InitializeComponent();
-            //dummy code for testing
-            DBHandler.SetDataBaseType(Model.DataBaseType.MySQL,
-                new Model.DBConnectionInfo() {
-                    address = "localhost",
-                    databaseName = "testdb",
-                    password = "",
-                    username = "root"
-                }
-            );
             labelEmailError.Text = "";
             labelPasswordError.Text = "";
             InitializePreferences();
         }
-
+        #region UI design
         private void InitializePreferences() {
             //dummy code for testing
             Preferences.SetTheme(Theme.ColorTheme.Dark);
@@ -46,7 +41,7 @@ namespace DesktopApplication {
                 groupBoxLogin.Controls[i].ForeColor = Preferences.Theme.ForegroundLevelTwo;
             }*/
         }
-
+        #endregion
         private void textBoxEmail_TextChanged(object sender, EventArgs e) {
             if (textBoxEmail.Text.Length == 0) return;
             if (!ValidateEmail(textBoxEmail.Text)) labelEmailError.Text = "Email format incorrect!";
@@ -60,13 +55,13 @@ namespace DesktopApplication {
             if (!atParts[1].Contains('.')) return false;
             string[] domainParts = atParts[1].Split('.');
             foreach (string item in domainParts) if (item.Length == 0) return false;
+            foreach (char item in domainParts[domainParts.Length - 1]) if (!Char.IsLetter(item)) return false;
             return true;
         }
 
-        private void maskedTextBoxPassword_TextChanged(object sender, EventArgs e) {
-            if (maskedTextBoxPassword.Text.Length == 0) return;
+        private string PasswordStatusMessage(PasswordStatus status) {
             string text = "";
-            switch (ValidatePasswordStatus(maskedTextBoxPassword.Text)) {
+            switch (status) {
                 case PasswordStatus.TooShort:
                     text = $"Too short, minimum {Globals.MinimumPasswordLength} characters needed";
                     break;
@@ -83,7 +78,12 @@ namespace DesktopApplication {
                     text = "No special character present!";
                     break;
             }
-            labelPasswordError.Text = text;
+            return text;
+        }
+
+    private void maskedTextBoxPassword_TextChanged(object sender, EventArgs e) {
+            if (maskedTextBoxPassword.Text.Length == 0) return;
+            labelPasswordError.Text = PasswordStatusMessage(ValidatePasswordStatus(maskedTextBoxPassword.Text));
         }
 
         private PasswordStatus ValidatePasswordStatus(string text) {
@@ -131,15 +131,28 @@ namespace DesktopApplication {
             return PasswordStatus.Correct;
         }
 
-        private bool ValidatePassword(string text) {
-            return (ValidatePasswordStatus(text) == PasswordStatus.Correct);
-        }
-
         private void buttonLogin_Click(object sender, EventArgs e) {
-            if (ValidateEmail(textBoxEmail.Text) && ValidatePassword(maskedTextBoxPassword.Text)) {
-                //login
+            bool emailValid = ValidateEmail(textBoxEmail.Text);
+            PasswordStatus passwordValid = ValidatePasswordStatus(maskedTextBoxPassword.Text);
+            if (emailValid && passwordValid == PasswordStatus.Correct) {
+                User user = User.Empty;
+                try {
+                    user = DBHandler.User.LoginUser(textBoxEmail.Text, maskedTextBoxPassword.Text);
+                } catch (GenericDatabaseException ex) {
+                    MessageBox.Show(ex.Message);
+                } catch (InvalidEmailException) {
+                    MessageBox.Show("Email incorrect");
+                } catch (InvalidPasswordException) {
+                    MessageBox.Show("Password incorrect");
+                } finally {
+                    if (user.Id != Guid.Empty) {
+                        parentForm.SetUser(user);
+                        Dispose();
+                    }
+                }
             } else {
-                //error
+                if (!emailValid) labelEmailError.Text = "Email format incorrect!";
+                if (passwordValid != PasswordStatus.Correct) labelPasswordError.Text = PasswordStatusMessage(passwordValid);
             }
         }
     }
