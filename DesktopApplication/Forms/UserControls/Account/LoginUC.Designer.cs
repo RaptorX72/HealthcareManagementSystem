@@ -43,7 +43,7 @@
             this.groupBoxLogin.Controls.Add(this.label1);
             this.groupBoxLogin.Controls.Add(this.maskedTextBoxPassword);
             this.groupBoxLogin.Controls.Add(this.textBoxEmail);
-            this.groupBoxLogin.Location = new System.Drawing.Point(3, 3);
+            this.groupBoxLogin.Location = new System.Drawing.Point(315, 152);
             this.groupBoxLogin.Name = "groupBoxLogin";
             this.groupBoxLogin.Size = new System.Drawing.Size(260, 210);
             this.groupBoxLogin.TabIndex = 0;
@@ -119,7 +119,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.groupBoxLogin);
             this.Name = "LoginUC";
-            this.Size = new System.Drawing.Size(270, 220);
+            this.Size = new System.Drawing.Size(900, 540);
             this.groupBoxLogin.ResumeLayout(false);
             this.groupBoxLogin.PerformLayout();
             this.ResumeLayout(false);

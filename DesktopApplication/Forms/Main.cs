@@ -18,12 +18,12 @@ namespace DesktopApplication {
                     username = "root"
                 }
             );
-            flowLayoutPanelMain.Controls.Add(new LoginUC(this));
-
+            panelMain.Controls.Add(new LoginUC(this));
         }
 
         public void SetUser(User user) {
             this.user = user;
+            panelMain.Controls.Add(new DoctorMainFormUC(this, user) { Dock = DockStyle.Fill });
         }
     }
 }
