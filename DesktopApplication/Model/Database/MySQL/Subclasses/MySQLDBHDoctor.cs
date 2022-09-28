@@ -39,8 +39,8 @@ namespace DesktopApplication.Model.Database {
                 cmd.Parameters.AddWithValue("@lastName", newDoctor.LastName);
                 try {
                     cmd.ExecuteNonQuery();
-                } catch (MySqlException) {
-                    throw;
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
                 } finally {
                     con.Close();
                 }
@@ -59,8 +59,8 @@ namespace DesktopApplication.Model.Database {
                 cmd.CommandText = $"DELETE FROM Doctor WHERE id = '{doctorId}'";
                 try {
                     cmd.ExecuteNonQuery();
-                } catch (MySqlException) {
-                    throw;
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
                 } finally {
                     con.Close();
                 }
@@ -144,8 +144,8 @@ namespace DesktopApplication.Model.Database {
                 cmd.Parameters.AddWithValue("@lastName", doctor.LastName);
                 try {
                     cmd.ExecuteNonQuery();
-                } catch (MySqlException) {
-                    throw;
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
                 } finally {
                     con.Close();
                 }

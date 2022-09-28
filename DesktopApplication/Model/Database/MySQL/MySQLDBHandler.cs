@@ -1,7 +1,4 @@
-﻿using MySql.Data.MySqlClient;
-using System.Text;
-
-namespace DesktopApplication.Model.Database {
+﻿namespace DesktopApplication.Model.Database {
     public class MySQLDBHandler : IDBHandler {
         private MySQLDBHAppointment appointmentDb;
         private MySQLDBHDoctor doctorDb;

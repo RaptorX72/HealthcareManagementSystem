@@ -42,8 +42,8 @@ namespace DesktopApplication.Model.Database {
                 //TODO: Add result as well if exists
                 try {
                     cmd.ExecuteNonQuery();
-                } catch (MySqlException) {
-                    throw;
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
                 } finally {
                     con.Close();
                 }
@@ -62,8 +62,8 @@ namespace DesktopApplication.Model.Database {
                 cmd.CommandText = $"DELETE FROM MedicalTest WHERE doctorId = '{doctorId}'";
                 try {
                     cmd.ExecuteNonQuery();
-                } catch (MySqlException) {
-                    throw;
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
                 } finally {
                     con.Close();
                 }
@@ -77,8 +77,8 @@ namespace DesktopApplication.Model.Database {
                 cmd.CommandText = $"DELETE FROM MedicalTest WHERE testTypeId = {(int)medicalTestType + 1}";
                 try {
                     cmd.ExecuteNonQuery();
-                } catch (MySqlException) {
-                    throw;
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
                 } finally {
                     con.Close();
                 }
@@ -96,8 +96,8 @@ namespace DesktopApplication.Model.Database {
                 cmd.CommandText = $"DELETE FROM MedicalTest WHERE doctorId = '{patientId}'";
                 try {
                     cmd.ExecuteNonQuery();
-                } catch (MySqlException) {
-                    throw;
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
                 } finally {
                     con.Close();
                 }
@@ -115,8 +115,8 @@ namespace DesktopApplication.Model.Database {
                 cmd.CommandText = $"DELETE FROM MedicalTest WHERE id = '{medicalTestId}'";
                 try {
                     cmd.ExecuteNonQuery();
-                } catch (MySqlException) {
-                    throw;
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
                 } finally {
                     con.Close();
                 }
@@ -216,8 +216,8 @@ namespace DesktopApplication.Model.Database {
                 cmd.Parameters.AddWithValue("@testTypeId", (int)medicalTest.MedicalTestType + 1);
                 try {
                     cmd.ExecuteNonQuery();
-                } catch (MySqlException) {
-                    throw;
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
                 } finally {
                     con.Close();
                 }

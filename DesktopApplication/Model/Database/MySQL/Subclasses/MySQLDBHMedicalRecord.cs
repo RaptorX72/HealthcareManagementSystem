@@ -86,8 +86,8 @@ namespace DesktopApplication.Model.Database {
                 cmd.Parameters.AddWithValue("@weight", newMedicalRecord.Weight);
                 try {
                     cmd.ExecuteNonQuery();
-                } catch (MySqlException) {
-                    throw;
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
                 } finally {
                     con.Close();
                 }
@@ -106,8 +106,8 @@ namespace DesktopApplication.Model.Database {
                 cmd.CommandText = $"DELETE FROM MedicalRecord WHERE id = '{medicalRecordId}'";
                 try {
                     cmd.ExecuteNonQuery();
-                } catch (MySqlException) {
-                    throw;
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
                 } finally {
                     con.Close();
                 }
@@ -179,8 +179,8 @@ namespace DesktopApplication.Model.Database {
                 cmd.Parameters.AddWithValue("@weight", medicalRecord.Weight);
                 try {
                     cmd.ExecuteNonQuery();
-                } catch (MySqlException) {
-                    throw;
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
                 } finally {
                     con.Close();
                 }

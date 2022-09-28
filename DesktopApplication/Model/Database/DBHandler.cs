@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DesktopApplication.Model.Database {
+﻿namespace DesktopApplication.Model.Database {
     public class DBHandler {
         private static IDBHandler database;
 

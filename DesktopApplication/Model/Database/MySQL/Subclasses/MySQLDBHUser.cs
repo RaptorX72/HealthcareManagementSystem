@@ -40,8 +40,8 @@ namespace DesktopApplication.Model.Database {
                 cmd.Parameters.AddWithValue("@password", newUser.Password);
                 try {
                     cmd.ExecuteNonQuery();
-                } catch (MySqlException) {
-                    throw;
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
                 } finally {
                     con.Close();
                 }
@@ -127,8 +127,8 @@ namespace DesktopApplication.Model.Database {
                 cmd.Parameters.AddWithValue("@password", user.Password);
                 try {
                     cmd.ExecuteNonQuery();
-                } catch (MySqlException) {
-                    throw;
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
                 } finally {
                     con.Close();
                 }

@@ -44,8 +44,8 @@ namespace DesktopApplication.Model.Database {
                 cmd.Parameters.AddWithValue("@unitOfMeasurementId", newMedication.UnitOfMeasurement + 1);
                 try {
                     cmd.ExecuteNonQuery();
-                } catch (MySqlException) {
-                    throw;
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
                 } finally {
                     con.Close();
                 }
@@ -64,8 +64,8 @@ namespace DesktopApplication.Model.Database {
                 cmd.CommandText = $"DELETE FROM Medication WHERE id = '{medicationId}'";
                 try {
                     cmd.ExecuteNonQuery();
-                } catch (MySqlException) {
-                    throw;
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
                 } finally {
                     con.Close();
                 }
@@ -128,8 +128,8 @@ namespace DesktopApplication.Model.Database {
                 cmd.Parameters.AddWithValue("@unitOfMeasurementId", medication.UnitOfMeasurement + 1);
                 try {
                     cmd.ExecuteNonQuery();
-                } catch (MySqlException) {
-                    throw;
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
                 } finally {
                     con.Close();
                 }

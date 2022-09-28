@@ -40,8 +40,8 @@ namespace DesktopApplication.Model.Database {
                 cmd.Parameters.AddWithValue("@note", newAppointment.Notes);
                 try {
                     cmd.ExecuteNonQuery();
-                } catch (MySqlException) {
-                    throw;
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
                 } finally {
                     con.Close();
                 }
@@ -56,8 +56,8 @@ namespace DesktopApplication.Model.Database {
                 cmd.CommandText = $"DELETE FROM Appointment WHERE appointmentDate = '{date.ToString(Globals.DateFormat)}'";
                 try {
                     cmd.ExecuteNonQuery();
-                } catch (MySqlException) {
-                    throw;
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
                 } finally {
                     con.Close();
                 }
@@ -75,8 +75,8 @@ namespace DesktopApplication.Model.Database {
                 cmd.CommandText = $"DELETE FROM Appointment WHERE doctorId = '{doctorId}'";
                 try {
                     cmd.ExecuteNonQuery();
-                } catch (MySqlException) {
-                    throw;
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
                 } finally {
                     con.Close();
                 }
@@ -94,8 +94,8 @@ namespace DesktopApplication.Model.Database {
                 cmd.CommandText = $"DELETE FROM Appointment WHERE patientId = '{patientId}'";
                 try {
                     cmd.ExecuteNonQuery();
-                } catch (MySqlException) {
-                    throw;
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
                 } finally {
                     con.Close();
                 }
@@ -117,8 +117,8 @@ namespace DesktopApplication.Model.Database {
                 cmd.CommandText = $"DELETE FROM Appointment WHERE id = '{appointmentId}'";
                 try {
                     cmd.ExecuteNonQuery();
-                } catch (MySqlException) {
-                    throw;
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
                 } finally {
                     con.Close();
                 }
@@ -227,8 +227,8 @@ namespace DesktopApplication.Model.Database {
                 cmd.Parameters.AddWithValue("@note", appointment.Notes);
                 try {
                     cmd.ExecuteNonQuery();
-                } catch (MySqlException) {
-                    throw;
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
                 } finally {
                     con.Close();
                 }

@@ -44,8 +44,8 @@ namespace DesktopApplication.Model.Database {
                 cmd.Parameters.AddWithValue("@outcomeId", (int)newSurgery.Outcome + 1);
                 try {
                     cmd.ExecuteNonQuery();
-                } catch (MySqlException) {
-                    throw;
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
                 } finally {
                     con.Close();
                 }
@@ -64,8 +64,8 @@ namespace DesktopApplication.Model.Database {
                 cmd.CommandText = $"DELETE FROM Surgery WHERE appointerId = '{doctorId}'";
                 try {
                     cmd.ExecuteNonQuery();
-                } catch (MySqlException) {
-                    throw;
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
                 } finally {
                     con.Close();
                 }
@@ -79,8 +79,8 @@ namespace DesktopApplication.Model.Database {
                 cmd.CommandText = $"DELETE FROM Surgery WHERE surgeryDate = '{date.ToString(Globals.DateFormat)}'";
                 try {
                     cmd.ExecuteNonQuery();
-                } catch (MySqlException) {
-                    throw;
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
                 } finally {
                     con.Close();
                 }
@@ -94,8 +94,8 @@ namespace DesktopApplication.Model.Database {
                 cmd.CommandText = $"DELETE FROM Surgery WHERE outcomeId = {(int)outcome + 1}";
                 try {
                     cmd.ExecuteNonQuery();
-                } catch (MySqlException) {
-                    throw;
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
                 } finally {
                     con.Close();
                 }
@@ -113,8 +113,8 @@ namespace DesktopApplication.Model.Database {
                 cmd.CommandText = $"DELETE FROM Surgery WHERE surgeonId = '{doctorId}'";
                 try {
                     cmd.ExecuteNonQuery();
-                } catch (MySqlException) {
-                    throw;
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
                 } finally {
                     con.Close();
                 }
@@ -132,8 +132,8 @@ namespace DesktopApplication.Model.Database {
                 cmd.CommandText = $"DELETE FROM Surgery WHERE patientId = '{patientId}'";
                 try {
                     cmd.ExecuteNonQuery();
-                } catch (MySqlException) {
-                    throw;
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
                 } finally {
                     con.Close();
                 }
@@ -151,8 +151,8 @@ namespace DesktopApplication.Model.Database {
                 cmd.CommandText = $"DELETE FROM Surgery WHERE id = '{surgeryId}'";
                 try {
                     cmd.ExecuteNonQuery();
-                } catch (MySqlException) {
-                    throw;
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
                 } finally {
                     con.Close();
                 }
@@ -291,8 +291,8 @@ namespace DesktopApplication.Model.Database {
                 cmd.Parameters.AddWithValue("@outcomeId", (int)surgery.Outcome + 1);
                 try {
                     cmd.ExecuteNonQuery();
-                } catch (MySqlException) {
-                    throw;
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
                 } finally {
                     con.Close();
                 }

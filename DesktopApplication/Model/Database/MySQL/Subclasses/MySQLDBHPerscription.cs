@@ -40,8 +40,8 @@ namespace DesktopApplication.Model.Database {
                 cmd.Parameters.AddWithValue("@note", newPerscription.Note);
                 try {
                     cmd.ExecuteNonQuery();
-                } catch (MySqlException) {
-                    throw;
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
                 } finally {
                     con.Close();
                 }
@@ -61,8 +61,8 @@ namespace DesktopApplication.Model.Database {
                 cmd.CommandText = $"DELETE FROM Perscription WHERE doctorId = '{doctorId}'";
                 try {
                     cmd.ExecuteNonQuery();
-                } catch (MySqlException) {
-                    throw;
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
                 } finally {
                     con.Close();
                 }
@@ -80,8 +80,8 @@ namespace DesktopApplication.Model.Database {
                 cmd.CommandText = $"DELETE FROM Perscription WHERE patientId = '{patientId}'";
                 try {
                     cmd.ExecuteNonQuery();
-                } catch (MySqlException) {
-                    throw;
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
                 } finally {
                     con.Close();
                 }
@@ -99,8 +99,8 @@ namespace DesktopApplication.Model.Database {
                 cmd.CommandText = $"DELETE FROM Perscription WHERE id = '{perscriptionId}'";
                 try {
                     cmd.ExecuteNonQuery();
-                } catch (MySqlException) {
-                    throw;
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
                 } finally {
                     con.Close();
                 }
@@ -191,8 +191,8 @@ namespace DesktopApplication.Model.Database {
                 cmd.Parameters.AddWithValue("@note", perscription.Note);
                 try {
                     cmd.ExecuteNonQuery();
-                } catch (MySqlException) {
-                    throw;
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
                 } finally {
                     con.Close();
                 }

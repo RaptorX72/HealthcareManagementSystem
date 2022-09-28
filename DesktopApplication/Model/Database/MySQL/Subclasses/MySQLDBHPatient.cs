@@ -36,8 +36,13 @@ namespace DesktopApplication.Model.Database {
                 cmd.Parameters.AddWithValue("@firstName", newPatient.FirstName);
                 cmd.Parameters.AddWithValue("@middleName", newPatient.MiddleName);
                 cmd.Parameters.AddWithValue("@lastName", newPatient.LastName);
-                cmd.ExecuteNonQuery();
-                con.Close();
+                try {
+                    cmd.ExecuteNonQuery();
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
+                } finally {
+                    con.Close();
+                }
             }
             return newPatient;
         }
@@ -51,8 +56,13 @@ namespace DesktopApplication.Model.Database {
                 cmd.Connection = con;
                 con.Open();
                 cmd.CommandText = $"DELETE FROM Patient WHERE id = '{patientId}'";
-                cmd.ExecuteNonQuery();
-                con.Close();
+                try {
+                    cmd.ExecuteNonQuery();
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
+                } finally {
+                    con.Close();
+                }
             }
         }
 
@@ -127,8 +137,13 @@ namespace DesktopApplication.Model.Database {
                 cmd.Parameters.AddWithValue("@firstName", patient.FirstName);
                 cmd.Parameters.AddWithValue("@middleName", patient.MiddleName);
                 cmd.Parameters.AddWithValue("@lastName", patient.LastName);
-                cmd.ExecuteNonQuery();
-                con.Close();
+                try {
+                    cmd.ExecuteNonQuery();
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
+                } finally {
+                    con.Close();
+                }
             }
         }
 

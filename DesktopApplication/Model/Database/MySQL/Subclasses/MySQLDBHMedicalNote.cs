@@ -37,8 +37,8 @@ namespace DesktopApplication.Model.Database {
                 cmd.Parameters.AddWithValue("@note", newMedicalNote.Note);
                 try {
                     cmd.ExecuteNonQuery();
-                } catch (MySqlException) {
-                    throw;
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
                 } finally {
                     con.Close();
                 }
@@ -65,8 +65,8 @@ namespace DesktopApplication.Model.Database {
                 con.Open();
                 try {
                     cmd.ExecuteNonQuery();
-                } catch (MySqlException) {
-                    throw;
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
                 } finally {
                     con.Close();
                 }
@@ -92,8 +92,8 @@ namespace DesktopApplication.Model.Database {
                 con.Open();
                 try {
                     cmd.ExecuteNonQuery();
-                } catch (MySqlException) {
-                    throw;
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
                 } finally {
                     con.Close();
                 }
@@ -111,8 +111,8 @@ namespace DesktopApplication.Model.Database {
                 cmd.CommandText = $"DELETE FROM MedicalNote WHERE id = '{medicalNoteId}'";
                 try {
                     cmd.ExecuteNonQuery();
-                } catch (MySqlException) {
-                    throw;
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
                 } finally {
                     con.Close();
                 }
@@ -232,8 +232,8 @@ namespace DesktopApplication.Model.Database {
                 cmd.Parameters.AddWithValue("@note", medicalNote.Note);
                 try {
                     cmd.ExecuteNonQuery();
-                } catch (MySqlException) {
-                    throw;
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
                 } finally {
                     con.Close();
                 }
