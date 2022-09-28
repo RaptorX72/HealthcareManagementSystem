@@ -29,9 +29,14 @@
             this.buttonExit = new System.Windows.Forms.Button();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.labelFirstName = new System.Windows.Forms.Label();
+            this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
+            this.buttonMedications = new System.Windows.Forms.Button();
+            this.buttonAppointments = new System.Windows.Forms.Button();
+            this.buttonSurgeries = new System.Windows.Forms.Button();
             this.tableLayoutPanelMain.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
+            this.tableLayoutPanel3.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanelMain
@@ -91,16 +96,17 @@
             this.tableLayoutPanel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.tableLayoutPanel2.AutoSize = true;
-            this.tableLayoutPanel2.ColumnCount = 1;
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel2.ColumnCount = 2;
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel2.Controls.Add(this.labelFirstName, 0, 0);
+            this.tableLayoutPanel2.Controls.Add(this.tableLayoutPanel3, 1, 0);
             this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 1;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(61, 40);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(356, 40);
             this.tableLayoutPanel2.TabIndex = 1;
             // 
             // labelFirstName
@@ -116,6 +122,62 @@
             this.labelFirstName.Text = "label1";
             this.labelFirstName.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // tableLayoutPanel3
+            // 
+            this.tableLayoutPanel3.AutoSize = true;
+            this.tableLayoutPanel3.ColumnCount = 3;
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel3.Controls.Add(this.buttonMedications, 1, 0);
+            this.tableLayoutPanel3.Controls.Add(this.buttonAppointments, 0, 0);
+            this.tableLayoutPanel3.Controls.Add(this.buttonSurgeries, 2, 0);
+            this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel3.Location = new System.Drawing.Point(61, 0);
+            this.tableLayoutPanel3.Margin = new System.Windows.Forms.Padding(0);
+            this.tableLayoutPanel3.Name = "tableLayoutPanel3";
+            this.tableLayoutPanel3.RowCount = 1;
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(295, 40);
+            this.tableLayoutPanel3.TabIndex = 1;
+            // 
+            // buttonMedications
+            // 
+            this.buttonMedications.AutoSize = true;
+            this.buttonMedications.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonMedications.Location = new System.Drawing.Point(133, 5);
+            this.buttonMedications.Margin = new System.Windows.Forms.Padding(5);
+            this.buttonMedications.Name = "buttonMedications";
+            this.buttonMedications.Size = new System.Drawing.Size(82, 30);
+            this.buttonMedications.TabIndex = 1;
+            this.buttonMedications.Text = "Medications";
+            this.buttonMedications.UseVisualStyleBackColor = true;
+            // 
+            // buttonAppointments
+            // 
+            this.buttonAppointments.AutoSize = true;
+            this.buttonAppointments.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonAppointments.Location = new System.Drawing.Point(30, 5);
+            this.buttonAppointments.Margin = new System.Windows.Forms.Padding(30, 5, 5, 5);
+            this.buttonAppointments.Name = "buttonAppointments";
+            this.buttonAppointments.Size = new System.Drawing.Size(93, 30);
+            this.buttonAppointments.TabIndex = 0;
+            this.buttonAppointments.Text = "Appointments";
+            this.buttonAppointments.UseVisualStyleBackColor = true;
+            this.buttonAppointments.Click += new System.EventHandler(this.buttonAppointments_Click);
+            // 
+            // buttonSurgeries
+            // 
+            this.buttonSurgeries.AutoSize = true;
+            this.buttonSurgeries.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonSurgeries.Location = new System.Drawing.Point(225, 5);
+            this.buttonSurgeries.Margin = new System.Windows.Forms.Padding(5);
+            this.buttonSurgeries.Name = "buttonSurgeries";
+            this.buttonSurgeries.Size = new System.Drawing.Size(65, 30);
+            this.buttonSurgeries.TabIndex = 2;
+            this.buttonSurgeries.Text = "Surgeries";
+            this.buttonSurgeries.UseVisualStyleBackColor = true;
+            // 
             // DoctorMainFormUC
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -128,6 +190,8 @@
             this.tableLayoutPanel1.PerformLayout();
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
+            this.tableLayoutPanel3.ResumeLayout(false);
+            this.tableLayoutPanel3.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -140,5 +204,9 @@
         private Button buttonExit;
         private TableLayoutPanel tableLayoutPanel2;
         private Label labelFirstName;
+        private TableLayoutPanel tableLayoutPanel3;
+        private Button buttonMedications;
+        private Button buttonAppointments;
+        private Button buttonSurgeries;
     }
 }

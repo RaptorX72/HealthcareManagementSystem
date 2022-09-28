@@ -7,6 +7,7 @@ namespace DesktopApplication {
         private Main parentForm;
         private User user;
         private Doctor doctor;
+        private DoctorAppointmentManagerUC doctorAppointmentManagerUC;
         public DoctorMainFormUC(Main parentForm, User user) {
             InitializeComponent();
             this.parentForm = parentForm;
@@ -22,6 +23,14 @@ namespace DesktopApplication {
 
         private void buttonExit_Click(object sender, EventArgs e) {
             Dispose();
+        }
+
+        private void buttonAppointments_Click(object sender, EventArgs e) {
+            panelMain.Controls.Clear();
+            if (doctorAppointmentManagerUC == null) {
+                doctorAppointmentManagerUC = new DoctorAppointmentManagerUC(this, doctor) { Dock = DockStyle.Fill };
+            }
+            panelMain.Controls.Add(doctorAppointmentManagerUC);
         }
     }
 }
