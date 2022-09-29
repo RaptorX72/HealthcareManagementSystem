@@ -27,22 +27,22 @@ namespace DesktopApplication.Model.Database {
             Medication newMedication = medication;
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
-                //check if guid already exists in database
-                while (true) {
-                    cmd.CommandText = $"SELECT COUNT(id) FROM Medication WHERE id = '{medication.Id}'";
-                    //if yes, generate a new guid
-                    if ((Int64)cmd.ExecuteScalar() == 0) break;
-                    else newMedication = new Medication(newMedication.Name, newMedication.MainIngedient, newMedication.Dosage, newMedication.Size, newMedication.UnitOfMeasurement);
-                }
-                cmd.CommandText = "INSERT INTO Medication (id, name, mainIngredient, dosage, size, unitOfMeasurementId) VALUES (@id, @name, @mainIngredient, @dosage, @size, @unitOfMeasurementId)";
-                cmd.Parameters.AddWithValue("@id", newMedication.Id);
-                cmd.Parameters.AddWithValue("@name", newMedication.Name);
-                cmd.Parameters.AddWithValue("@mainIngredient", newMedication.MainIngedient);
-                cmd.Parameters.AddWithValue("@dosage", newMedication.Dosage);
-                cmd.Parameters.AddWithValue("@size", newMedication.Size);
-                cmd.Parameters.AddWithValue("@unitOfMeasurementId", newMedication.UnitOfMeasurement + 1);
                 try {
+                    con.Open();
+                    //check if guid already exists in database
+                    while (true) {
+                        cmd.CommandText = $"SELECT COUNT(id) FROM Medication WHERE id = '{medication.Id}'";
+                        //if yes, generate a new guid
+                        if ((Int64)cmd.ExecuteScalar() == 0) break;
+                        else newMedication = new Medication(newMedication.Name, newMedication.MainIngedient, newMedication.Dosage, newMedication.Size, newMedication.UnitOfMeasurement);
+                    }
+                    cmd.CommandText = "INSERT INTO Medication (id, name, mainIngredient, dosage, size, unitOfMeasurementId) VALUES (@id, @name, @mainIngredient, @dosage, @size, @unitOfMeasurementId)";
+                    cmd.Parameters.AddWithValue("@id", newMedication.Id);
+                    cmd.Parameters.AddWithValue("@name", newMedication.Name);
+                    cmd.Parameters.AddWithValue("@mainIngredient", newMedication.MainIngedient);
+                    cmd.Parameters.AddWithValue("@dosage", newMedication.Dosage);
+                    cmd.Parameters.AddWithValue("@size", newMedication.Size);
+                    cmd.Parameters.AddWithValue("@unitOfMeasurementId", newMedication.UnitOfMeasurement + 1);
                     cmd.ExecuteNonQuery();
                 } catch (MySqlException ex) {
                     throw new GenericDatabaseException(ex.Message);
@@ -60,9 +60,9 @@ namespace DesktopApplication.Model.Database {
         public override void DeleteMedicationById(Guid medicationId) {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = $"DELETE FROM Medication WHERE id = '{medicationId}'";
                 try {
+                    con.Open();
                     cmd.ExecuteNonQuery();
                 } catch (MySqlException ex) {
                     throw new GenericDatabaseException(ex.Message);
@@ -76,12 +76,17 @@ namespace DesktopApplication.Model.Database {
             List<Medication> medications = new List<Medication>();
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = "SELECT * FROM Medication";
-                using (MySqlDataReader reader = cmd.ExecuteReader()) {
-                    while (reader.Read()) medications.Add(FillMedicationWithReaderData(reader));
+                try {
+                    con.Open();
+                    using (MySqlDataReader reader = cmd.ExecuteReader()) {
+                        while (reader.Read()) medications.Add(FillMedicationWithReaderData(reader));
+                    }
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
+                } finally {
+                    con.Close();
                 }
-                con.Close();
             }
             return medications;
         }
@@ -101,13 +106,18 @@ namespace DesktopApplication.Model.Database {
             Medication medication = Medication.Empty;
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = $"SELECT * FROM Medication WHERE id = '{medicationId}'";
-                using (MySqlDataReader reader = cmd.ExecuteReader()) {
-                    reader.Read();
-                    if (reader.HasRows) medication = FillMedicationWithReaderData(reader);
+                try {
+                    con.Open();
+                    using (MySqlDataReader reader = cmd.ExecuteReader()) {
+                        reader.Read();
+                        if (reader.HasRows) medication = FillMedicationWithReaderData(reader);
+                    }
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
+                } finally {
+                    con.Close();
                 }
-                con.Close();
             }
             return medication;
         }
@@ -119,7 +129,6 @@ namespace DesktopApplication.Model.Database {
         public override void UpdateMedicationById(Guid medicationId, Medication medication) {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = $"UPDATE Medication SET name = @name, mainIngredient = @mainIngredient, dosage = @dosage, size = @size, unitOfMeasurementId = @unitOfMeasurementId WHERE id = '{medicationId}'";
                 cmd.Parameters.AddWithValue("@name", medication.Name);
                 cmd.Parameters.AddWithValue("@mainIngredient", medication.MainIngedient);
@@ -127,6 +136,7 @@ namespace DesktopApplication.Model.Database {
                 cmd.Parameters.AddWithValue("@size", medication.Size);
                 cmd.Parameters.AddWithValue("@unitOfMeasurementId", medication.UnitOfMeasurement + 1);
                 try {
+                    con.Open();
                     cmd.ExecuteNonQuery();
                 } catch (MySqlException ex) {
                     throw new GenericDatabaseException(ex.Message);

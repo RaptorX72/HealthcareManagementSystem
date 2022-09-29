@@ -24,21 +24,21 @@ namespace DesktopApplication.Model.Database {
             Perscription newPerscription = perscription;
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
-                //check if guid already exists in database
-                while (true) {
-                    cmd.CommandText = $"SELECT COUNT(id) FROM Perscription WHERE id = '{newPerscription.Id}'";
-                    //if yes, generate a new guid
-                    if ((Int64)cmd.ExecuteScalar() == 0) break;
-                    else newPerscription = new Perscription(newPerscription.PatientId, newPerscription.DoctorId, newPerscription.Medication, newPerscription.Note);
-                }
-                cmd.CommandText = "INSERT INTO Perscription (id, patientId, doctorId, medicationId, note) VALUES (@id, @patientId, @doctorId, @medicationId, @note)";
-                cmd.Parameters.AddWithValue("@id", newPerscription.Id);
-                cmd.Parameters.AddWithValue("@patientId", newPerscription.PatientId);
-                cmd.Parameters.AddWithValue("@doctorId", newPerscription.DoctorId);
-                cmd.Parameters.AddWithValue("@medicationId", newPerscription.Medication.Id);
-                cmd.Parameters.AddWithValue("@note", newPerscription.Note);
                 try {
+                    con.Open();
+                    //check if guid already exists in database
+                    while (true) {
+                        cmd.CommandText = $"SELECT COUNT(id) FROM Perscription WHERE id = '{newPerscription.Id}'";
+                        //if yes, generate a new guid
+                        if ((Int64)cmd.ExecuteScalar() == 0) break;
+                        else newPerscription = new Perscription(newPerscription.PatientId, newPerscription.DoctorId, newPerscription.Medication, newPerscription.Note);
+                    }
+                    cmd.CommandText = "INSERT INTO Perscription (id, patientId, doctorId, medicationId, note) VALUES (@id, @patientId, @doctorId, @medicationId, @note)";
+                    cmd.Parameters.AddWithValue("@id", newPerscription.Id);
+                    cmd.Parameters.AddWithValue("@patientId", newPerscription.PatientId);
+                    cmd.Parameters.AddWithValue("@doctorId", newPerscription.DoctorId);
+                    cmd.Parameters.AddWithValue("@medicationId", newPerscription.Medication.Id);
+                    cmd.Parameters.AddWithValue("@note", newPerscription.Note);
                     cmd.ExecuteNonQuery();
                 } catch (MySqlException ex) {
                     throw new GenericDatabaseException(ex.Message);
@@ -57,9 +57,9 @@ namespace DesktopApplication.Model.Database {
             //TODO: add delete notes
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = $"DELETE FROM Perscription WHERE doctorId = '{doctorId}'";
                 try {
+                    con.Open();
                     cmd.ExecuteNonQuery();
                 } catch (MySqlException ex) {
                     throw new GenericDatabaseException(ex.Message);
@@ -76,9 +76,9 @@ namespace DesktopApplication.Model.Database {
         public override void DeleteAllPerscriptionsOfPatientId(Guid patientId) {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = $"DELETE FROM Perscription WHERE patientId = '{patientId}'";
                 try {
+                    con.Open();
                     cmd.ExecuteNonQuery();
                 } catch (MySqlException ex) {
                     throw new GenericDatabaseException(ex.Message);
@@ -95,9 +95,9 @@ namespace DesktopApplication.Model.Database {
         public override void DeletePerscriptionById(Guid perscriptionId) {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = $"DELETE FROM Perscription WHERE id = '{perscriptionId}'";
                 try {
+                    con.Open();
                     cmd.ExecuteNonQuery();
                 } catch (MySqlException ex) {
                     throw new GenericDatabaseException(ex.Message);
@@ -111,12 +111,17 @@ namespace DesktopApplication.Model.Database {
             List<Perscription> perscriptions = new List<Perscription>();
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = "SELECT * FROM Perscription";
-                using (MySqlDataReader reader = cmd.ExecuteReader()) {
-                    while (reader.Read()) perscriptions.Add(FillPerscriptionWithReaderData(reader));
+                try {
+                    con.Open();
+                    using (MySqlDataReader reader = cmd.ExecuteReader()) {
+                        while (reader.Read()) perscriptions.Add(FillPerscriptionWithReaderData(reader));
+                    }
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
+                } finally {
+                    con.Close();
                 }
-                con.Close();
             }
             return perscriptions;
         }
@@ -129,12 +134,17 @@ namespace DesktopApplication.Model.Database {
             List<Perscription> perscriptions = new List<Perscription>();
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = $"SELECT * FROM Perscription WHERE doctorId = '{doctorId}'";
-                using (MySqlDataReader reader = cmd.ExecuteReader()) {
-                    while (reader.Read()) perscriptions.Add(FillPerscriptionWithReaderData(reader));
+                try {
+                    con.Open();
+                    using (MySqlDataReader reader = cmd.ExecuteReader()) {
+                        while (reader.Read()) perscriptions.Add(FillPerscriptionWithReaderData(reader));
+                    }
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
+                } finally {
+                    con.Close();
                 }
-                con.Close();
             }
             return perscriptions;
         }
@@ -147,12 +157,17 @@ namespace DesktopApplication.Model.Database {
             List<Perscription> perscriptions = new List<Perscription>();
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = $"SELECT * FROM Perscription WHERE patientId = '{patientId}'";
-                using (MySqlDataReader reader = cmd.ExecuteReader()) {
-                    while (reader.Read()) perscriptions.Add(FillPerscriptionWithReaderData(reader));
+                try {
+                    con.Open();
+                    using (MySqlDataReader reader = cmd.ExecuteReader()) {
+                        while (reader.Read()) perscriptions.Add(FillPerscriptionWithReaderData(reader));
+                    }
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
+                } finally {
+                    con.Close();
                 }
-                con.Close();
             }
             return perscriptions;
         }
@@ -161,13 +176,18 @@ namespace DesktopApplication.Model.Database {
             Perscription perscription = Perscription.Empty;
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = $"SELECT * FROM Perscription WHERE id = '{perscriptionId}'";
-                using (MySqlDataReader reader = cmd.ExecuteReader()) {
-                    reader.Read();
-                    if (reader.HasRows) perscription = FillPerscriptionWithReaderData(reader);
+                try {
+                    con.Open();
+                    using (MySqlDataReader reader = cmd.ExecuteReader()) {
+                        reader.Read();
+                        if (reader.HasRows) perscription = FillPerscriptionWithReaderData(reader);
+                    }
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
+                } finally {
+                    con.Close();
                 }
-                con.Close();
             }
             return perscription;
         }
@@ -183,13 +203,13 @@ namespace DesktopApplication.Model.Database {
         public override void UpdatePerscriptionById(Guid perscriptionId, Perscription perscription) {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = $"UPDATE Perscription SET patientId = @patientId, doctorId = @doctorId, medicationId = @medicationId, note = @note WHERE id = '{perscriptionId}'";
                 cmd.Parameters.AddWithValue("@patientId", perscription.PatientId);
                 cmd.Parameters.AddWithValue("@doctorId", perscription.DoctorId);
                 cmd.Parameters.AddWithValue("@medicationId", perscription.Medication.Id);
                 cmd.Parameters.AddWithValue("@note", perscription.Note);
                 try {
+                    con.Open();
                     cmd.ExecuteNonQuery();
                 } catch (MySqlException ex) {
                     throw new GenericDatabaseException(ex.Message);

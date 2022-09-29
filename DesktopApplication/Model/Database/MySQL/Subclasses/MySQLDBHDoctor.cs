@@ -24,20 +24,20 @@ namespace DesktopApplication.Model.Database {
             Doctor newDoctor = doctor;
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
-                //check if guid already exists in database
-                while (true) {
-                    cmd.CommandText = $"SELECT COUNT(id) FROM Doctor WHERE id = '{newDoctor.Id}'";
-                    //if yes, generate a new guid
-                    if ((Int64)cmd.ExecuteScalar() == 0) break;
-                    else newDoctor = new Doctor(newDoctor.FirstName, newDoctor.MiddleName, newDoctor.LastName, newDoctor.SpecialityId);
-                }
-                cmd.CommandText = "INSERT INTO Doctor (id, firstName, middleName, lastName) VALUES (@id, @firstName, @middleName, @lastName)";
-                cmd.Parameters.AddWithValue("@id", newDoctor.Id);
-                cmd.Parameters.AddWithValue("@firstName", newDoctor.FirstName);
-                cmd.Parameters.AddWithValue("@middleName", newDoctor.MiddleName);
-                cmd.Parameters.AddWithValue("@lastName", newDoctor.LastName);
                 try {
+                    con.Open();
+                    //check if guid already exists in database
+                    while (true) {
+                        cmd.CommandText = $"SELECT COUNT(id) FROM Doctor WHERE id = '{newDoctor.Id}'";
+                        //if yes, generate a new guid
+                        if ((Int64)cmd.ExecuteScalar() == 0) break;
+                        else newDoctor = new Doctor(newDoctor.FirstName, newDoctor.MiddleName, newDoctor.LastName, newDoctor.SpecialityId);
+                    }
+                    cmd.CommandText = "INSERT INTO Doctor (id, firstName, middleName, lastName) VALUES (@id, @firstName, @middleName, @lastName)";
+                    cmd.Parameters.AddWithValue("@id", newDoctor.Id);
+                    cmd.Parameters.AddWithValue("@firstName", newDoctor.FirstName);
+                    cmd.Parameters.AddWithValue("@middleName", newDoctor.MiddleName);
+                    cmd.Parameters.AddWithValue("@lastName", newDoctor.LastName);
                     cmd.ExecuteNonQuery();
                 } catch (MySqlException ex) {
                     throw new GenericDatabaseException(ex.Message);
@@ -55,9 +55,9 @@ namespace DesktopApplication.Model.Database {
         public override void DeleteDoctorById(Guid doctorId) {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = $"DELETE FROM Doctor WHERE id = '{doctorId}'";
                 try {
+                    con.Open();
                     cmd.ExecuteNonQuery();
                 } catch (MySqlException ex) {
                     throw new GenericDatabaseException(ex.Message);
@@ -71,12 +71,17 @@ namespace DesktopApplication.Model.Database {
             List<Doctor> doctors = new List<Doctor>();
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = "SELECT * FROM Doctor";
-                using (MySqlDataReader reader = cmd.ExecuteReader()) {
-                    while (reader.Read()) doctors.Add(FillDoctorWithReaderData(reader));
+                try {
+                    con.Open();
+                    using (MySqlDataReader reader = cmd.ExecuteReader()) {
+                        while (reader.Read()) doctors.Add(FillDoctorWithReaderData(reader));
+                    }
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
+                } finally {
+                    con.Close();
                 }
-                con.Close();
             }
             return doctors;
         }
@@ -85,13 +90,18 @@ namespace DesktopApplication.Model.Database {
             Doctor doctor = Doctor.Empty;
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = $"SELECT * FROM Doctor WHERE id = '{doctorId}'";
-                using (MySqlDataReader reader = cmd.ExecuteReader()) {
-                    reader.Read();
-                    if (reader.HasRows) doctor = FillDoctorWithReaderData(reader);
+                try {
+                    con.Open();
+                    using (MySqlDataReader reader = cmd.ExecuteReader()) {
+                        reader.Read();
+                        if (reader.HasRows) doctor = FillDoctorWithReaderData(reader);
+                    }
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
+                } finally {
+                    con.Close();
                 }
-                con.Close();
             }
             return doctor;
         }
@@ -108,24 +118,29 @@ namespace DesktopApplication.Model.Database {
             List<Doctor> doctors = new List<Doctor>();
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
-                cmd.CommandText = $"SELECT doctorId FROM DoctorPatientTreatment WHERE patientId = '{patientId}'";
-                StringBuilder sb = new StringBuilder();
-                using (MySqlDataReader reader = cmd.ExecuteReader()) {
-                    List<Guid> ids = new List<Guid>();
-                    while (reader.Read()) ids.Add(reader.GetGuid("doctorId"));
-                    sb.Append("SELECT * FROM Doctor WHERE id IN (");
-                    for (int i = 0; i < ids.Count; i++) {
-                        sb.Append($"'{ids[i].ToString()}'");
-                        if (i < ids.Count - 1) sb.Append(", ");
+                try {
+                    con.Open();
+                    cmd.CommandText = $"SELECT doctorId FROM DoctorPatientTreatment WHERE patientId = '{patientId}'";
+                    StringBuilder sb = new StringBuilder();
+                    using (MySqlDataReader reader = cmd.ExecuteReader()) {
+                        List<Guid> ids = new List<Guid>();
+                        while (reader.Read()) ids.Add(reader.GetGuid("doctorId"));
+                        sb.Append("SELECT * FROM Doctor WHERE id IN (");
+                        for (int i = 0; i < ids.Count; i++) {
+                            sb.Append($"'{ids[i].ToString()}'");
+                            if (i < ids.Count - 1) sb.Append(", ");
+                        }
+                        sb.Append(")");
                     }
-                    sb.Append(")");
+                    cmd.CommandText = sb.ToString();
+                    using (MySqlDataReader reader = cmd.ExecuteReader()) {
+                        while (reader.Read()) doctors.Add(FillDoctorWithReaderData(reader));
+                    }
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
+                } finally {
+                    con.Close();
                 }
-                cmd.CommandText = sb.ToString();
-                using (MySqlDataReader reader = cmd.ExecuteReader()) {
-                    while (reader.Read()) doctors.Add(FillDoctorWithReaderData(reader));
-                }
-                con.Close();
             }
             return doctors;
         }
@@ -137,12 +152,12 @@ namespace DesktopApplication.Model.Database {
         public override void UpdateDoctorById(Guid doctorId, Doctor doctor) {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = $"UPDATE Doctor SET firstName = @firstName, middleName = @middleName, lastName = @lastName WHERE id = '{doctorId}'";
                 cmd.Parameters.AddWithValue("@firstName", doctor.FirstName);
                 cmd.Parameters.AddWithValue("@middleName", doctor.MiddleName);
                 cmd.Parameters.AddWithValue("@lastName", doctor.LastName);
                 try {
+                    con.Open();
                     cmd.ExecuteNonQuery();
                 } catch (MySqlException ex) {
                     throw new GenericDatabaseException(ex.Message);

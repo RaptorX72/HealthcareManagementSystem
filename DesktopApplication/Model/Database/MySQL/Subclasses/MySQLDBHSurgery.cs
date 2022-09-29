@@ -26,23 +26,23 @@ namespace DesktopApplication.Model.Database {
             Surgery newSurgery = surgery;
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
-                //check if guid already exists in database
-                while (true) {
-                    cmd.CommandText = $"SELECT COUNT(id) FROM Surgery WHERE id = '{newSurgery.Id}'";
-                    //if yes, generate a new guid
-                    if ((Int64)cmd.ExecuteScalar() == 0) break;
-                    else newSurgery = new Surgery(newSurgery.AppointerDoctorId, newSurgery.SurgeonDoctorId, newSurgery.PatientId, newSurgery.Date, newSurgery.Notes, newSurgery.Outcome);
-                }
-                cmd.CommandText = "INSERT INTO Surgery (id, appointerId, surgeonId, patientId, surgeryDate, note, outcomeId) VALUES (@id, @appointerId, @surgeonId, @patientId, @surgeryDate, @note, @outcomeId)";
-                cmd.Parameters.AddWithValue("@id", newSurgery.Id);
-                cmd.Parameters.AddWithValue("@appointerId", newSurgery.AppointerDoctorId);
-                cmd.Parameters.AddWithValue("@surgeonId", newSurgery.SurgeonDoctorId);
-                cmd.Parameters.AddWithValue("@patientId", newSurgery.PatientId);
-                cmd.Parameters.AddWithValue("@surgeryDate", newSurgery.Date);
-                cmd.Parameters.AddWithValue("@note", newSurgery.Notes);
-                cmd.Parameters.AddWithValue("@outcomeId", (int)newSurgery.Outcome + 1);
                 try {
+                    con.Open();
+                    //check if guid already exists in database
+                    while (true) {
+                        cmd.CommandText = $"SELECT COUNT(id) FROM Surgery WHERE id = '{newSurgery.Id}'";
+                        //if yes, generate a new guid
+                        if ((Int64)cmd.ExecuteScalar() == 0) break;
+                        else newSurgery = new Surgery(newSurgery.AppointerDoctorId, newSurgery.SurgeonDoctorId, newSurgery.PatientId, newSurgery.Date, newSurgery.Notes, newSurgery.Outcome);
+                    }
+                    cmd.CommandText = "INSERT INTO Surgery (id, appointerId, surgeonId, patientId, surgeryDate, note, outcomeId) VALUES (@id, @appointerId, @surgeonId, @patientId, @surgeryDate, @note, @outcomeId)";
+                    cmd.Parameters.AddWithValue("@id", newSurgery.Id);
+                    cmd.Parameters.AddWithValue("@appointerId", newSurgery.AppointerDoctorId);
+                    cmd.Parameters.AddWithValue("@surgeonId", newSurgery.SurgeonDoctorId);
+                    cmd.Parameters.AddWithValue("@patientId", newSurgery.PatientId);
+                    cmd.Parameters.AddWithValue("@surgeryDate", newSurgery.Date);
+                    cmd.Parameters.AddWithValue("@note", newSurgery.Notes);
+                    cmd.Parameters.AddWithValue("@outcomeId", (int)newSurgery.Outcome + 1);
                     cmd.ExecuteNonQuery();
                 } catch (MySqlException ex) {
                     throw new GenericDatabaseException(ex.Message);
@@ -60,9 +60,9 @@ namespace DesktopApplication.Model.Database {
         public override void DeleteAllSurgeriesByAppointerDoctorId(Guid doctorId) {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = $"DELETE FROM Surgery WHERE appointerId = '{doctorId}'";
                 try {
+                    con.Open();
                     cmd.ExecuteNonQuery();
                 } catch (MySqlException ex) {
                     throw new GenericDatabaseException(ex.Message);
@@ -75,9 +75,9 @@ namespace DesktopApplication.Model.Database {
         public override void DeleteAllSurgeriesByDate(DateTime date) {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = $"DELETE FROM Surgery WHERE surgeryDate = '{date.ToString(Globals.DateFormat)}'";
                 try {
+                    con.Open();
                     cmd.ExecuteNonQuery();
                 } catch (MySqlException ex) {
                     throw new GenericDatabaseException(ex.Message);
@@ -90,9 +90,9 @@ namespace DesktopApplication.Model.Database {
         public override void DeleteAllSurgeriesByOutcome(SurgeryOutcome outcome) {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = $"DELETE FROM Surgery WHERE outcomeId = {(int)outcome + 1}";
                 try {
+                    con.Open();
                     cmd.ExecuteNonQuery();
                 } catch (MySqlException ex) {
                     throw new GenericDatabaseException(ex.Message);
@@ -109,9 +109,9 @@ namespace DesktopApplication.Model.Database {
         public override void DeleteAllSurgeriesBySurgeonId(Guid doctorId) {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = $"DELETE FROM Surgery WHERE surgeonId = '{doctorId}'";
                 try {
+                    con.Open();
                     cmd.ExecuteNonQuery();
                 } catch (MySqlException ex) {
                     throw new GenericDatabaseException(ex.Message);
@@ -128,9 +128,9 @@ namespace DesktopApplication.Model.Database {
         public override void DeleteAllSurgeriesOFPatientById(Guid patientId) {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = $"DELETE FROM Surgery WHERE patientId = '{patientId}'";
                 try {
+                    con.Open();
                     cmd.ExecuteNonQuery();
                 } catch (MySqlException ex) {
                     throw new GenericDatabaseException(ex.Message);
@@ -147,9 +147,9 @@ namespace DesktopApplication.Model.Database {
         public override void DeleteSurgeryById(Guid surgeryId) {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = $"DELETE FROM Surgery WHERE id = '{surgeryId}'";
                 try {
+                    con.Open();
                     cmd.ExecuteNonQuery();
                 } catch (MySqlException ex) {
                     throw new GenericDatabaseException(ex.Message);
@@ -163,12 +163,17 @@ namespace DesktopApplication.Model.Database {
             List<Surgery> surgeries = new List<Surgery>();
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = "SELECT * FROM Surgery";
-                using (MySqlDataReader reader = cmd.ExecuteReader()) {
-                    while (reader.Read()) surgeries.Add(FillSurgeryWithReaderData(reader));
+                try {
+                    con.Open();
+                    using (MySqlDataReader reader = cmd.ExecuteReader()) {
+                        while (reader.Read()) surgeries.Add(FillSurgeryWithReaderData(reader));
+                    }
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
+                } finally {
+                    con.Close();
                 }
-                con.Close();
             }
             return surgeries;
         }
@@ -181,12 +186,17 @@ namespace DesktopApplication.Model.Database {
             List<Surgery> surgeries = new List<Surgery>();
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = $"SELECT * FROM Surgery WHERE appointerId = '{doctorId}'";
-                using (MySqlDataReader reader = cmd.ExecuteReader()) {
-                    while (reader.Read()) surgeries.Add(FillSurgeryWithReaderData(reader));
+                try {
+                    con.Open();
+                    using (MySqlDataReader reader = cmd.ExecuteReader()) {
+                        while (reader.Read()) surgeries.Add(FillSurgeryWithReaderData(reader));
+                    }
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
+                } finally {
+                    con.Close();
                 }
-                con.Close();
             }
             return surgeries;
         }
@@ -195,12 +205,17 @@ namespace DesktopApplication.Model.Database {
             List<Surgery> surgeries = new List<Surgery>();
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = $"SELECT * FROM Surgery WHERE surgeryDate = '{date.ToString(Globals.DateFormat)}'";
-                using (MySqlDataReader reader = cmd.ExecuteReader()) {
-                    while (reader.Read()) surgeries.Add(FillSurgeryWithReaderData(reader));
+                try {
+                    con.Open();
+                    using (MySqlDataReader reader = cmd.ExecuteReader()) {
+                        while (reader.Read()) surgeries.Add(FillSurgeryWithReaderData(reader));
+                    }
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
+                } finally {
+                    con.Close();
                 }
-                con.Close();
             }
             return surgeries;
         }
@@ -209,12 +224,17 @@ namespace DesktopApplication.Model.Database {
             List<Surgery> surgeries = new List<Surgery>();
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = $"SELECT * FROM Surgery WHERE outcomeId = {(int)outcome + 1}";
-                using (MySqlDataReader reader = cmd.ExecuteReader()) {
-                    while (reader.Read()) surgeries.Add(FillSurgeryWithReaderData(reader));
+                try {
+                    con.Open();
+                    using (MySqlDataReader reader = cmd.ExecuteReader()) {
+                        while (reader.Read()) surgeries.Add(FillSurgeryWithReaderData(reader));
+                    }
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
+                } finally {
+                    con.Close();
                 }
-                con.Close();
             }
             return surgeries;
         }
@@ -227,12 +247,17 @@ namespace DesktopApplication.Model.Database {
             List<Surgery> surgeries = new List<Surgery>();
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = $"SELECT * FROM Surgery WHERE surgeonId = '{doctorId}'";
-                using (MySqlDataReader reader = cmd.ExecuteReader()) {
-                    while (reader.Read()) surgeries.Add(FillSurgeryWithReaderData(reader));
+                try {
+                    con.Open();
+                    using (MySqlDataReader reader = cmd.ExecuteReader()) {
+                        while (reader.Read()) surgeries.Add(FillSurgeryWithReaderData(reader));
+                    }
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
+                } finally {
+                    con.Close();
                 }
-                con.Close();
             }
             return surgeries;
         }
@@ -245,12 +270,17 @@ namespace DesktopApplication.Model.Database {
             List<Surgery> surgeries = new List<Surgery>();
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = $"SELECT * FROM Surgery WHERE patientId = '{patientId}'";
-                using (MySqlDataReader reader = cmd.ExecuteReader()) {
-                    while (reader.Read()) surgeries.Add(FillSurgeryWithReaderData(reader));
+                try {
+                    con.Open();
+                    using (MySqlDataReader reader = cmd.ExecuteReader()) {
+                        while (reader.Read()) surgeries.Add(FillSurgeryWithReaderData(reader));
+                    }
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
+                } finally {
+                    con.Close();
                 }
-                con.Close();
             }
             return surgeries;
         }
@@ -259,13 +289,18 @@ namespace DesktopApplication.Model.Database {
             Surgery surgery = Surgery.Empty;
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = $"SELECT * FROM Surgery WHERE id = '{surgeryId}'";
-                using (MySqlDataReader reader = cmd.ExecuteReader()) {
-                    reader.Read();
-                    if (reader.HasRows) surgery = FillSurgeryWithReaderData(reader);
+                try {
+                    con.Open();
+                    using (MySqlDataReader reader = cmd.ExecuteReader()) {
+                        reader.Read();
+                        if (reader.HasRows) surgery = FillSurgeryWithReaderData(reader);
+                    }
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
+                } finally {
+                    con.Close();
                 }
-                con.Close();
             }
             return surgery;
         }
@@ -281,7 +316,6 @@ namespace DesktopApplication.Model.Database {
         public override void UpdateSurgeryById(Guid surgeryId, Surgery surgery) {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = $"UPDATE Surgery SET appointerId = @appointerId, surgeonId = @surgeonId, patientId = @patientId, surgeryDate = @surgeryDate, note = @note, outcomeId = @outcomeId WHERE id = '{surgeryId}'";
                 cmd.Parameters.AddWithValue("@appointerId", surgery.AppointerDoctorId);
                 cmd.Parameters.AddWithValue("@surgeonId", surgery.SurgeonDoctorId);
@@ -290,6 +324,7 @@ namespace DesktopApplication.Model.Database {
                 cmd.Parameters.AddWithValue("@note", surgery.Notes);
                 cmd.Parameters.AddWithValue("@outcomeId", (int)surgery.Outcome + 1);
                 try {
+                    con.Open();
                     cmd.ExecuteNonQuery();
                 } catch (MySqlException ex) {
                     throw new GenericDatabaseException(ex.Message);

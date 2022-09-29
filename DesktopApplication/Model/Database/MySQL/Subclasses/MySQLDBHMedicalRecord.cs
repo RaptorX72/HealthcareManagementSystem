@@ -17,13 +17,18 @@ namespace DesktopApplication.Model.Database {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = bloodCon;
                 cmd.CommandText = $"SELECT * FROM BloodType WHERE id = {id}";
-                bloodCon.Open();
-                using (MySqlDataReader reader = cmd.ExecuteReader()) {
-                    reader.Read();
-                    if (reader.HasRows) bloodType = new BloodType(reader.GetString("protein"), reader.GetBoolean("rh"));
+                try {
+                    bloodCon.Open();
+                    using (MySqlDataReader reader = cmd.ExecuteReader()) {
+                        reader.Read();
+                        if (reader.HasRows) bloodType = new BloodType(reader.GetString("protein"), reader.GetBoolean("rh"));
+                    }
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
+                } finally {
+                    bloodCon.Close();
                 }
             }
-            bloodCon.Close();
             return bloodType;
         }
 
@@ -31,12 +36,17 @@ namespace DesktopApplication.Model.Database {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = bloodCon;
                 cmd.CommandText = $"SELECT id FROM BloodType WHERE protein = '{type.BloodAntigen}' AND rh = {type.Rh}";
-                bloodCon.Open();
-                using (MySqlDataReader reader = cmd.ExecuteReader()) {
-                    reader.Read();
-                    int res = reader.GetInt32("id");
+                try {
+                    bloodCon.Open();
+                    using (MySqlDataReader reader = cmd.ExecuteReader()) {
+                        reader.Read();
+                        int res = reader.GetInt32("id");
+                        return res;
+                    }
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
+                } finally {
                     bloodCon.Close();
-                    return res;
                 }
             }
         }
@@ -59,32 +69,32 @@ namespace DesktopApplication.Model.Database {
             MedicalRecord newMedicalRecord = record;
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
-                //check if guid already exists in database
-                while (true) {
-                    cmd.CommandText = $"SELECT COUNT(id) FROM MedicalRecord WHERE id = '{newMedicalRecord.Id}'";
-                    //if yes, generate a new guid
-                    if ((Int64)cmd.ExecuteScalar() == 0) break;
-                    else newMedicalRecord = new MedicalRecord(
-                        newMedicalRecord.PatientId,
-                        newMedicalRecord.BirthDate,
-                        newMedicalRecord.Gender,
-                        newMedicalRecord.BloodType,
-                        newMedicalRecord.Height,
-                        newMedicalRecord.Weight,
-                        newMedicalRecord.Perscriptions,
-                        newMedicalRecord.Notes
-                    );
-                }
-                cmd.CommandText = "INSERT INTO MedicalRecord (id, patientId, birthDate, gender, bloodTypeId, height, weight) VALUES (@id, @patientId, @birthDate, @gender, @bloodTypeId, @height, @weight)";
-                cmd.Parameters.AddWithValue("@id", newMedicalRecord.Id);
-                cmd.Parameters.AddWithValue("@patientId", newMedicalRecord.PatientId);
-                cmd.Parameters.AddWithValue("@birthDate", newMedicalRecord.BirthDate);
-                cmd.Parameters.AddWithValue("@gender", newMedicalRecord.Gender);
-                cmd.Parameters.AddWithValue("@bloodTypeId", GetIdOfBloodType(newMedicalRecord.BloodType));
-                cmd.Parameters.AddWithValue("@height", newMedicalRecord.Height);
-                cmd.Parameters.AddWithValue("@weight", newMedicalRecord.Weight);
                 try {
+                    con.Open();
+                    //check if guid already exists in database
+                    while (true) {
+                        cmd.CommandText = $"SELECT COUNT(id) FROM MedicalRecord WHERE id = '{newMedicalRecord.Id}'";
+                        //if yes, generate a new guid
+                        if ((Int64)cmd.ExecuteScalar() == 0) break;
+                        else newMedicalRecord = new MedicalRecord(
+                            newMedicalRecord.PatientId,
+                            newMedicalRecord.BirthDate,
+                            newMedicalRecord.Gender,
+                            newMedicalRecord.BloodType,
+                            newMedicalRecord.Height,
+                            newMedicalRecord.Weight,
+                            newMedicalRecord.Perscriptions,
+                            newMedicalRecord.Notes
+                        );
+                    }
+                    cmd.CommandText = "INSERT INTO MedicalRecord (id, patientId, birthDate, gender, bloodTypeId, height, weight) VALUES (@id, @patientId, @birthDate, @gender, @bloodTypeId, @height, @weight)";
+                    cmd.Parameters.AddWithValue("@id", newMedicalRecord.Id);
+                    cmd.Parameters.AddWithValue("@patientId", newMedicalRecord.PatientId);
+                    cmd.Parameters.AddWithValue("@birthDate", newMedicalRecord.BirthDate);
+                    cmd.Parameters.AddWithValue("@gender", newMedicalRecord.Gender);
+                    cmd.Parameters.AddWithValue("@bloodTypeId", GetIdOfBloodType(newMedicalRecord.BloodType));
+                    cmd.Parameters.AddWithValue("@height", newMedicalRecord.Height);
+                    cmd.Parameters.AddWithValue("@weight", newMedicalRecord.Weight);
                     cmd.ExecuteNonQuery();
                 } catch (MySqlException ex) {
                     throw new GenericDatabaseException(ex.Message);
@@ -102,9 +112,9 @@ namespace DesktopApplication.Model.Database {
         public override void DeleteMedicalRecordById(Guid medicalRecordId) {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = $"DELETE FROM MedicalRecord WHERE id = '{medicalRecordId}'";
                 try {
+                    con.Open();
                     cmd.ExecuteNonQuery();
                 } catch (MySqlException ex) {
                     throw new GenericDatabaseException(ex.Message);
@@ -118,12 +128,17 @@ namespace DesktopApplication.Model.Database {
             List<MedicalRecord> medicalRecords = new List<MedicalRecord>();
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = "SELECT * FROM MedicalRecord";
-                using (MySqlDataReader reader = cmd.ExecuteReader()) {
-                    while (reader.Read()) medicalRecords.Add(FillMedicalRecordWithReaderData(reader));
+                try {
+                    con.Open();
+                    using (MySqlDataReader reader = cmd.ExecuteReader()) {
+                        while (reader.Read()) medicalRecords.Add(FillMedicalRecordWithReaderData(reader));
+                    }
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
+                } finally {
+                    con.Close();
                 }
-                con.Close();
             }
             return medicalRecords;
         }
@@ -132,13 +147,18 @@ namespace DesktopApplication.Model.Database {
             MedicalRecord medicalRecord = MedicalRecord.Empty;
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = $"SELECT * FROM MedicalRecord WHERE id = '{medicalRecordId}'";
-                using (MySqlDataReader reader = cmd.ExecuteReader()) {
-                    reader.Read();
-                    if (reader.HasRows) medicalRecord = FillMedicalRecordWithReaderData(reader);
+                try {
+                    con.Open();
+                    using (MySqlDataReader reader = cmd.ExecuteReader()) {
+                        reader.Read();
+                        if (reader.HasRows) medicalRecord = FillMedicalRecordWithReaderData(reader);
+                    }
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
+                } finally {
+                    con.Close();
                 }
-                con.Close();
             }
             return medicalRecord;
         }
@@ -151,13 +171,18 @@ namespace DesktopApplication.Model.Database {
             MedicalRecord medicalRecord = MedicalRecord.Empty;
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = $"SELECT * FROM MedicalRecord WHERE patientId = '{patientId}'";
-                using (MySqlDataReader reader = cmd.ExecuteReader()) {
-                    reader.Read();
-                    if (reader.HasRows) medicalRecord = FillMedicalRecordWithReaderData(reader);
+                try {
+                    con.Open();
+                    using (MySqlDataReader reader = cmd.ExecuteReader()) {
+                        reader.Read();
+                        if (reader.HasRows) medicalRecord = FillMedicalRecordWithReaderData(reader);
+                    }
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
+                } finally {
+                    con.Close();
                 }
-                con.Close();
             }
             return medicalRecord;
         }
@@ -169,15 +194,15 @@ namespace DesktopApplication.Model.Database {
         public override void UpdateMedicalRecordById(Guid medicalRecordId, MedicalRecord medicalRecord) {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = $"UPDATE MedicalRecord SET patientId = @patientId, birthDate = @birthDate, gender = @gender, bloodTypeId = @bloodTypeId, height = @height, weight = @weight WHERE id = '{medicalRecordId}'";
                 cmd.Parameters.AddWithValue("@patientId", medicalRecord.PatientId);
                 cmd.Parameters.AddWithValue("@birthDate", medicalRecord.BirthDate);
                 cmd.Parameters.AddWithValue("@gender", medicalRecord.Gender);
-                cmd.Parameters.AddWithValue("@bloodTypeId", GetIdOfBloodType(medicalRecord.BloodType));
                 cmd.Parameters.AddWithValue("@height", medicalRecord.Height);
                 cmd.Parameters.AddWithValue("@weight", medicalRecord.Weight);
                 try {
+                    cmd.Parameters.AddWithValue("@bloodTypeId", GetIdOfBloodType(medicalRecord.BloodType));
+                    con.Open();
                     cmd.ExecuteNonQuery();
                 } catch (MySqlException ex) {
                     throw new GenericDatabaseException(ex.Message);

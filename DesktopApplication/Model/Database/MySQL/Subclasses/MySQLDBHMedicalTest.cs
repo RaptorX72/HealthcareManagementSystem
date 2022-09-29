@@ -26,21 +26,21 @@ namespace DesktopApplication.Model.Database {
             MedicalTest newMedicalTest = medicalTest;
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
-                //check if guid already exists in database
-                while (true) {
-                    cmd.CommandText = $"SELECT COUNT(id) FROM MedicalTest WHERE id = '{newMedicalTest.Id}'";
-                    //if yes, generate a new guid
-                    if ((Int64)cmd.ExecuteScalar() == 0) break;
-                    else newMedicalTest = new MedicalTest(newMedicalTest.DoctorId, newMedicalTest.PatientId, newMedicalTest.MedicalTestType);
-                }
-                cmd.CommandText = "INSERT INTO MedicalTest (id, doctorId, patientId, testTypeId) VALUES (@id, @doctorId, @patientId, @testTypeId)";
-                cmd.Parameters.AddWithValue("@id", newMedicalTest.Id);
-                cmd.Parameters.AddWithValue("@doctorId", newMedicalTest.DoctorId);
-                cmd.Parameters.AddWithValue("@patientId", newMedicalTest.PatientId);
-                cmd.Parameters.AddWithValue("@testTypeId", (int)newMedicalTest.MedicalTestType + 1);
-                //TODO: Add result as well if exists
                 try {
+                    con.Open();
+                    //check if guid already exists in database
+                    while (true) {
+                        cmd.CommandText = $"SELECT COUNT(id) FROM MedicalTest WHERE id = '{newMedicalTest.Id}'";
+                        //if yes, generate a new guid
+                        if ((Int64)cmd.ExecuteScalar() == 0) break;
+                        else newMedicalTest = new MedicalTest(newMedicalTest.DoctorId, newMedicalTest.PatientId, newMedicalTest.MedicalTestType);
+                    }
+                    cmd.CommandText = "INSERT INTO MedicalTest (id, doctorId, patientId, testTypeId) VALUES (@id, @doctorId, @patientId, @testTypeId)";
+                    cmd.Parameters.AddWithValue("@id", newMedicalTest.Id);
+                    cmd.Parameters.AddWithValue("@doctorId", newMedicalTest.DoctorId);
+                    cmd.Parameters.AddWithValue("@patientId", newMedicalTest.PatientId);
+                    cmd.Parameters.AddWithValue("@testTypeId", (int)newMedicalTest.MedicalTestType + 1);
+                    //TODO: Add result as well if exists
                     cmd.ExecuteNonQuery();
                 } catch (MySqlException ex) {
                     throw new GenericDatabaseException(ex.Message);
@@ -58,9 +58,9 @@ namespace DesktopApplication.Model.Database {
         public override void DeleteAllMedicalTestsByDoctorId(Guid doctorId) {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = $"DELETE FROM MedicalTest WHERE doctorId = '{doctorId}'";
                 try {
+                    con.Open();
                     cmd.ExecuteNonQuery();
                 } catch (MySqlException ex) {
                     throw new GenericDatabaseException(ex.Message);
@@ -73,9 +73,9 @@ namespace DesktopApplication.Model.Database {
         public override void DeleteAllMedicalTestsByType(MedicalTestType medicalTestType) {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = $"DELETE FROM MedicalTest WHERE testTypeId = {(int)medicalTestType + 1}";
                 try {
+                    con.Open();
                     cmd.ExecuteNonQuery();
                 } catch (MySqlException ex) {
                     throw new GenericDatabaseException(ex.Message);
@@ -92,9 +92,9 @@ namespace DesktopApplication.Model.Database {
         public override void DeleteAllMedicalTestsOfPatientById(Guid patientId) {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = $"DELETE FROM MedicalTest WHERE doctorId = '{patientId}'";
                 try {
+                    con.Open();
                     cmd.ExecuteNonQuery();
                 } catch (MySqlException ex) {
                     throw new GenericDatabaseException(ex.Message);
@@ -111,9 +111,9 @@ namespace DesktopApplication.Model.Database {
         public override void DeleteMedicalTestById(Guid medicalTestId) {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = $"DELETE FROM MedicalTest WHERE id = '{medicalTestId}'";
                 try {
+                    con.Open();
                     cmd.ExecuteNonQuery();
                 } catch (MySqlException ex) {
                     throw new GenericDatabaseException(ex.Message);
@@ -127,12 +127,17 @@ namespace DesktopApplication.Model.Database {
             List<MedicalTest> medicalTests = new List<MedicalTest>();
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = "SELECT * FROM MedicalTest";
-                using (MySqlDataReader reader = cmd.ExecuteReader()) {
-                    while (reader.Read()) medicalTests.Add(FillMedicalTestWithReaderData(reader));
+                try {
+                    con.Open();
+                    using (MySqlDataReader reader = cmd.ExecuteReader()) {
+                        while (reader.Read()) medicalTests.Add(FillMedicalTestWithReaderData(reader));
+                    }
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
+                } finally {
+                    con.Close();
                 }
-                con.Close();
             }
             return medicalTests;
         }
@@ -145,12 +150,17 @@ namespace DesktopApplication.Model.Database {
             List<MedicalTest> medicalTests = new List<MedicalTest>();
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = $"SELECT * FROM MedicalTest WHERE doctorId = '{doctorId}'";
-                using (MySqlDataReader reader = cmd.ExecuteReader()) {
-                    while (reader.Read()) medicalTests.Add(FillMedicalTestWithReaderData(reader));
+                try {
+                    con.Open();
+                    using (MySqlDataReader reader = cmd.ExecuteReader()) {
+                        while (reader.Read()) medicalTests.Add(FillMedicalTestWithReaderData(reader));
+                    }
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
+                } finally {
+                    con.Close();
                 }
-                con.Close();
             }
             return medicalTests;
         }
@@ -159,12 +169,17 @@ namespace DesktopApplication.Model.Database {
             List<MedicalTest> medicalTests = new List<MedicalTest>();
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = $"SELECT * FROM MedicalTest WHERE testTypeId = {(int)medicalTestType + 1}";
-                using (MySqlDataReader reader = cmd.ExecuteReader()) {
-                    while (reader.Read()) medicalTests.Add(FillMedicalTestWithReaderData(reader));
+                try {
+                    con.Open();
+                    using (MySqlDataReader reader = cmd.ExecuteReader()) {
+                        while (reader.Read()) medicalTests.Add(FillMedicalTestWithReaderData(reader));
+                    }
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
+                } finally {
+                    con.Close();
                 }
-                con.Close();
             }
             return medicalTests;
         }
@@ -177,12 +192,17 @@ namespace DesktopApplication.Model.Database {
             List<MedicalTest> medicalTests = new List<MedicalTest>();
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = $"SELECT * FROM MedicalTest WHERE patientId = '{patientId}'";
-                using (MySqlDataReader reader = cmd.ExecuteReader()) {
-                    while (reader.Read()) medicalTests.Add(FillMedicalTestWithReaderData(reader));
+                try {
+                    con.Open();
+                    using (MySqlDataReader reader = cmd.ExecuteReader()) {
+                        while (reader.Read()) medicalTests.Add(FillMedicalTestWithReaderData(reader));
+                    }
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
+                } finally {
+                    con.Close();
                 }
-                con.Close();
             }
             return medicalTests;
         }
@@ -191,13 +211,18 @@ namespace DesktopApplication.Model.Database {
             MedicalTest medicalTest = MedicalTest.Empty;
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = $"SELECT * FROM MedicalTest WHERE id = '{medicalTestId}'";
-                using (MySqlDataReader reader = cmd.ExecuteReader()) {
-                    reader.Read();
-                    if (reader.HasRows) medicalTest = FillMedicalTestWithReaderData(reader);
+                try {
+                    con.Open();
+                    using (MySqlDataReader reader = cmd.ExecuteReader()) {
+                        reader.Read();
+                        if (reader.HasRows) medicalTest = FillMedicalTestWithReaderData(reader);
+                    }
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
+                } finally {
+                    con.Close();
                 }
-                con.Close();
             }
             return medicalTest;
         }
@@ -209,12 +234,12 @@ namespace DesktopApplication.Model.Database {
         public override void UpdateMedicalTestById(Guid medicalTestId, MedicalTest medicalTest) {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = $"UPDATE MedicalTest SET doctorId = @doctorId, patientId = @patientId, testTypeId = @testTypeId WHERE id = '{medicalTestId}'";
                 cmd.Parameters.AddWithValue("@doctorId", medicalTest.DoctorId);
                 cmd.Parameters.AddWithValue("@patientId", medicalTest.PatientId);
                 cmd.Parameters.AddWithValue("@testTypeId", (int)medicalTest.MedicalTestType + 1);
                 try {
+                    con.Open();
                     cmd.ExecuteNonQuery();
                 } catch (MySqlException ex) {
                     throw new GenericDatabaseException(ex.Message);

@@ -24,21 +24,21 @@ namespace DesktopApplication.Model.Database {
             if (CheckIfEmailExists(user.Email)) throw new InvalidEmailException("Email already exists!");
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
-                //check if guid already exists in database
-                while (true) {
-                    cmd.CommandText = $"SELECT COUNT(id) FROM User WHERE id = '{newUser.Id}'";
-                    //if yes, generate a new guid
-                    if ((Int64)cmd.ExecuteScalar() == 0) break;
-                    else newUser = new User(user.Username, user.Email, user.Salt, user.Password); ;
-                }
-                cmd.CommandText = "INSERT INTO User (id, userName, email, salt, password) VALUES (@id, @username, @email, @salt, @password)";
-                cmd.Parameters.AddWithValue("@id", newUser.Id);
-                cmd.Parameters.AddWithValue("@username", newUser.Username);
-                cmd.Parameters.AddWithValue("@email", newUser.Email);
-                cmd.Parameters.AddWithValue("@salt", newUser.Salt);
-                cmd.Parameters.AddWithValue("@password", newUser.Password);
                 try {
+                    con.Open();
+                    //check if guid already exists in database
+                    while (true) {
+                        cmd.CommandText = $"SELECT COUNT(id) FROM User WHERE id = '{newUser.Id}'";
+                        //if yes, generate a new guid
+                        if ((Int64)cmd.ExecuteScalar() == 0) break;
+                        else newUser = new User(user.Username, user.Email, user.Salt, user.Password); ;
+                    }
+                    cmd.CommandText = "INSERT INTO User (id, userName, email, salt, password) VALUES (@id, @username, @email, @salt, @password)";
+                    cmd.Parameters.AddWithValue("@id", newUser.Id);
+                    cmd.Parameters.AddWithValue("@username", newUser.Username);
+                    cmd.Parameters.AddWithValue("@email", newUser.Email);
+                    cmd.Parameters.AddWithValue("@salt", newUser.Salt);
+                    cmd.Parameters.AddWithValue("@password", newUser.Password);
                     cmd.ExecuteNonQuery();
                 } catch (MySqlException ex) {
                     throw new GenericDatabaseException(ex.Message);
@@ -52,11 +52,16 @@ namespace DesktopApplication.Model.Database {
         public override bool CheckIfEmailExists(string email) {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
-                cmd.CommandText = $"SELECT COUNT(id) FROM User WHERE email = '{email}'";
-                bool found = (Int64)cmd.ExecuteScalar() > 0;
-                con.Close();
-                return found;
+                try {
+                    con.Open();
+                    cmd.CommandText = $"SELECT COUNT(id) FROM User WHERE email = '{email}'";
+                    bool found = (Int64)cmd.ExecuteScalar() > 0;
+                    return found;
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
+                } finally {
+                    con.Close();
+                }
             }
         }
 
@@ -64,12 +69,17 @@ namespace DesktopApplication.Model.Database {
             List<User> users = new List<User>();
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = "SELECT * FROM User";
-                using (MySqlDataReader reader = cmd.ExecuteReader()) {
-                    while (reader.Read()) users.Add(FillUserWithReaderData(reader));
+                try {
+                    con.Open();
+                    using (MySqlDataReader reader = cmd.ExecuteReader()) {
+                        while (reader.Read()) users.Add(FillUserWithReaderData(reader));
+                    }
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
+                } finally {
+                    con.Close();
                 }
-                con.Close();
             }
             return users;
         }
@@ -78,13 +88,18 @@ namespace DesktopApplication.Model.Database {
             User user = User.Empty;
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = $"SELECT * FROM User WHERE id = '{userId}'";
-                using (MySqlDataReader reader = cmd.ExecuteReader()) {
-                    reader.Read();
-                    if (reader.HasRows) user = FillUserWithReaderData(reader);
+                try {
+                    con.Open();
+                    using (MySqlDataReader reader = cmd.ExecuteReader()) {
+                        reader.Read();
+                        if (reader.HasRows) user = FillUserWithReaderData(reader);
+                    }
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
+                } finally {
+                    con.Close();
                 }
-                con.Close();
             }
             return user;
         }
@@ -92,25 +107,29 @@ namespace DesktopApplication.Model.Database {
         public override User LoginUser(string email, string password) {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = $"SELECT * FROM User WHERE email = '{email}'";
-                using (MySqlDataReader reader = cmd.ExecuteReader()) {
-                    if (!reader.HasRows) {
-                        con.Close();
-                        throw new InvalidEmailException("Email not found in database");
-                    }
-                    while(reader.Read()) {
-                        string salt = reader.GetString("salt");
-                        string userPassword = reader.GetString("password");
-                        if (User.HashPassword(salt, password) == userPassword) {
-                            User user = FillUserWithReaderData(reader);
+                try {
+                    con.Open();
+                    using (MySqlDataReader reader = cmd.ExecuteReader()) {
+                        if (!reader.HasRows) {
                             con.Close();
-                            return user;
-                        } else {
-                            con.Close();
-                            throw new InvalidPasswordException("Password is incorrect");
+                            throw new InvalidEmailException("Email not found in database");
+                        }
+                        while(reader.Read()) {
+                            string salt = reader.GetString("salt");
+                            string userPassword = reader.GetString("password");
+                            if (User.HashPassword(salt, password) == userPassword) {
+                                User user = FillUserWithReaderData(reader);
+                                return user;
+                            } else {
+                                throw new InvalidPasswordException("Password is incorrect");
+                            }
                         }
                     }
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
+                } finally {
+                    con.Close();
                 }
             }
             return User.Empty;
@@ -119,13 +138,13 @@ namespace DesktopApplication.Model.Database {
         public override void UpdateUserById(Guid userId, User user) {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = $"UPDATE User SET userName = @userName, email = @email, salt = @salt, password = @password WHERE id = '{userId}'";
                 cmd.Parameters.AddWithValue("@userName", user.Username);
                 cmd.Parameters.AddWithValue("@email", user.Email);
                 cmd.Parameters.AddWithValue("@salt", user.Salt);
                 cmd.Parameters.AddWithValue("@password", user.Password);
                 try {
+                    con.Open();
                     cmd.ExecuteNonQuery();
                 } catch (MySqlException ex) {
                     throw new GenericDatabaseException(ex.Message);

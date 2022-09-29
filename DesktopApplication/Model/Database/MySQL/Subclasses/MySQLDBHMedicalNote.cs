@@ -23,19 +23,19 @@ namespace DesktopApplication.Model.Database {
             MedicalNote newMedicalNote = medicalNote;
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
-                //check if guid already exists in database
-                while (true) {
-                    cmd.CommandText = $"SELECT COUNT(id) FROM MedicalNote WHERE id = '{newMedicalNote.Id}'";
-                    //if yes, generate a new guid
-                    if ((Int64)cmd.ExecuteScalar() == 0) break;
-                    else newMedicalNote = new MedicalNote(newMedicalNote.AppointmentId, newMedicalNote.Note);
-                }
-                cmd.CommandText = "INSERT INTO MedicalNote (id, appointmentId, note) VALUES (@id, @appointmentId, @note)";
-                cmd.Parameters.AddWithValue("@id", newMedicalNote.Id);
-                cmd.Parameters.AddWithValue("@appointmentId", newMedicalNote.AppointmentId);
-                cmd.Parameters.AddWithValue("@note", newMedicalNote.Note);
                 try {
+                    con.Open();
+                    //check if guid already exists in database
+                    while (true) {
+                        cmd.CommandText = $"SELECT COUNT(id) FROM MedicalNote WHERE id = '{newMedicalNote.Id}'";
+                        //if yes, generate a new guid
+                        if ((Int64)cmd.ExecuteScalar() == 0) break;
+                        else newMedicalNote = new MedicalNote(newMedicalNote.AppointmentId, newMedicalNote.Note);
+                    }
+                    cmd.CommandText = "INSERT INTO MedicalNote (id, appointmentId, note) VALUES (@id, @appointmentId, @note)";
+                    cmd.Parameters.AddWithValue("@id", newMedicalNote.Id);
+                    cmd.Parameters.AddWithValue("@appointmentId", newMedicalNote.AppointmentId);
+                    cmd.Parameters.AddWithValue("@note", newMedicalNote.Note);
                     cmd.ExecuteNonQuery();
                 } catch (MySqlException ex) {
                     throw new GenericDatabaseException(ex.Message);
@@ -62,8 +62,8 @@ namespace DesktopApplication.Model.Database {
                 }
                 sb.Append(")");
                 cmd.CommandText = sb.ToString();
-                con.Open();
                 try {
+                    con.Open();
                     cmd.ExecuteNonQuery();
                 } catch (MySqlException ex) {
                     throw new GenericDatabaseException(ex.Message);
@@ -89,8 +89,8 @@ namespace DesktopApplication.Model.Database {
                 }
                 sb.Append(")");
                 cmd.CommandText = sb.ToString();
-                con.Open();
                 try {
+                    con.Open();
                     cmd.ExecuteNonQuery();
                 } catch (MySqlException ex) {
                     throw new GenericDatabaseException(ex.Message);
@@ -107,9 +107,9 @@ namespace DesktopApplication.Model.Database {
         public override void DeleteMedicalNoteById(Guid medicalNoteId) {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = $"DELETE FROM MedicalNote WHERE id = '{medicalNoteId}'";
                 try {
+                    con.Open();
                     cmd.ExecuteNonQuery();
                 } catch (MySqlException ex) {
                     throw new GenericDatabaseException(ex.Message);
@@ -123,12 +123,17 @@ namespace DesktopApplication.Model.Database {
             List<MedicalNote> medicalNotes = new List<MedicalNote>();
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = "SELECT * FROM MedicalNote";
-                using (MySqlDataReader reader = cmd.ExecuteReader()) {
-                    while (reader.Read()) medicalNotes.Add(FillMedicalNoteWithReaderData(reader));
+                try {
+                    con.Open();
+                    using (MySqlDataReader reader = cmd.ExecuteReader()) {
+                        while (reader.Read()) medicalNotes.Add(FillMedicalNoteWithReaderData(reader));
+                    }
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
+                } finally {
+                    con.Close();
                 }
-                con.Close();
             }
             return medicalNotes;
         }
@@ -150,11 +155,16 @@ namespace DesktopApplication.Model.Database {
                 }
                 sb.Append(")");
                 cmd.CommandText = sb.ToString();
-                con.Open();
-                using (MySqlDataReader reader = cmd.ExecuteReader()) {
-                    while (reader.Read()) medicalNotes.Add(FillMedicalNoteWithReaderData(reader));
+                try {
+                    con.Open();
+                    using (MySqlDataReader reader = cmd.ExecuteReader()) {
+                        while (reader.Read()) medicalNotes.Add(FillMedicalNoteWithReaderData(reader));
+                    }
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
+                } finally {
+                    con.Close();
                 }
-                con.Close();
             }
             return medicalNotes;
         }
@@ -176,11 +186,16 @@ namespace DesktopApplication.Model.Database {
                 }
                 sb.Append(")");
                 cmd.CommandText = sb.ToString();
-                con.Open();
-                using (MySqlDataReader reader = cmd.ExecuteReader()) {
-                    while (reader.Read()) medicalNotes.Add(FillMedicalNoteWithReaderData(reader));
+                try {
+                    con.Open();
+                    using (MySqlDataReader reader = cmd.ExecuteReader()) {
+                        while (reader.Read()) medicalNotes.Add(FillMedicalNoteWithReaderData(reader));
+                    }
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
+                } finally {
+                    con.Close();
                 }
-                con.Close();
             }
             return medicalNotes;
         }
@@ -193,13 +208,18 @@ namespace DesktopApplication.Model.Database {
             MedicalNote medicalNote = MedicalNote.Empty;
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = $"SELECT * FROM MedicalNote WHERE appointmentId = '{appointmentId}'";
-                using (MySqlDataReader reader = cmd.ExecuteReader()) {
-                    reader.Read();
-                    if (reader.HasRows) medicalNote = FillMedicalNoteWithReaderData(reader);
+                try {
+                    con.Open();
+                    using (MySqlDataReader reader = cmd.ExecuteReader()) {
+                        reader.Read();
+                        if (reader.HasRows) medicalNote = FillMedicalNoteWithReaderData(reader);
+                    }
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
+                } finally {
+                    con.Close();
                 }
-                con.Close();
             }
             return medicalNote;
         }
@@ -208,13 +228,18 @@ namespace DesktopApplication.Model.Database {
             MedicalNote medicalNote = MedicalNote.Empty;
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = $"SELECT * FROM MedicalNote WHERE id = '{medicalNoteId}'";
-                using (MySqlDataReader reader = cmd.ExecuteReader()) {
-                    reader.Read();
-                    if (reader.HasRows) medicalNote = FillMedicalNoteWithReaderData(reader);
+                try {
+                    con.Open();
+                    using (MySqlDataReader reader = cmd.ExecuteReader()) {
+                        reader.Read();
+                        if (reader.HasRows) medicalNote = FillMedicalNoteWithReaderData(reader);
+                    }
+                } catch (MySqlException ex) {
+                    throw new GenericDatabaseException(ex.Message);
+                } finally {
+                    con.Close();
                 }
-                con.Close();
             }
             return medicalNote;
         }
@@ -226,11 +251,11 @@ namespace DesktopApplication.Model.Database {
         public override void UpdateMedicalNoteById(Guid medicalNoteId, MedicalNote medicalNote) {
             using (MySqlCommand cmd = new MySqlCommand()) {
                 cmd.Connection = con;
-                con.Open();
                 cmd.CommandText = $"UPDATE MedicalNote SET appointmentId = @appointmentId, note = @note WHERE id = '{medicalNoteId}'";
                 cmd.Parameters.AddWithValue("@appointerId", medicalNote.AppointmentId);
                 cmd.Parameters.AddWithValue("@note", medicalNote.Note);
                 try {
+                    con.Open();
                     cmd.ExecuteNonQuery();
                 } catch (MySqlException ex) {
                     throw new GenericDatabaseException(ex.Message);
