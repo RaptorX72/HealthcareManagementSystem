@@ -1,6 +1,7 @@
 ﻿using DesktopApplication.Model.Database;
 using DesktopApplication.Model.Healthcare;
 using DesktopApplication.Model.Management;
+using DesktopApplication.Forms;
 
 namespace DesktopApplication {
     public partial class DoctorAppointmentManagerUC : UserControl {
@@ -29,7 +30,6 @@ namespace DesktopApplication {
         }
 
         private void PopulateAppointmentListBox(ListBox lb, List<Appointment> appointments) {
-            lb.SelectedIndex = -1;
             lb.Items.Clear();
             foreach (Appointment item in appointments) {
                 Patient p = DBHandler.Patient.GetPatientById(item.PatientId);
@@ -43,23 +43,29 @@ namespace DesktopApplication {
         }
 
         private void buttonUpcomingAdd_Click(object sender, EventArgs e) {
-
+            if (new AppointmentEditorForm(doctor).ShowDialog() == DialogResult.OK) RefreshLists();
         }
 
         private void buttonUpcomingEdit_Click(object sender, EventArgs e) {
-
+            if (listBoxUpcomingAppointments.SelectedIndex == -1) return;
+            if (new AppointmentEditorForm(doctor, upcomingAppointments[listBoxUpcomingAppointments.SelectedIndex]).ShowDialog() == DialogResult.OK) RefreshLists();
         }
 
         private void buttonUpcomingDelete_Click(object sender, EventArgs e) {
-
+            if (listBoxUpcomingAppointments.SelectedIndex == -1) return;
+            if (MessageBox.Show("Are you sure you want to delete appointment?", "Warning", MessageBoxButtons.YesNo) == DialogResult.Yes) {
+                Appointment ap = upcomingAppointments[listBoxUpcomingAppointments.SelectedIndex];
+                listBoxUpcomingAppointments.Items.Remove(ap);
+                DBHandler.Appointment.DeleteAppointment(ap);
+            }
         }
 
         private void buttonUpcomingRefresh_Click(object sender, EventArgs e) {
-
+            RefreshLists();
         }
 
         private void buttonPastRefresh_Click(object sender, EventArgs e) {
-
+            RefreshLists();
         }
     }
 }

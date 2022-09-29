@@ -32,23 +32,23 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.checkBoxOwnPatients = new System.Windows.Forms.CheckBox();
+            this.comboBoxPatients = new System.Windows.Forms.ComboBox();
             this.tableLayoutPanel7 = new System.Windows.Forms.TableLayoutPanel();
-            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDown2 = new System.Windows.Forms.NumericUpDown();
-            this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
+            this.numericUpDownHour = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownMinute = new System.Windows.Forms.NumericUpDown();
+            this.dateTimePickerAppointmentDate = new System.Windows.Forms.DateTimePicker();
             this.tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
             this.label3 = new System.Windows.Forms.Label();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.richTextBoxNotes = new System.Windows.Forms.RichTextBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
             this.tableLayoutPanel4.SuspendLayout();
             this.tableLayoutPanel5.SuspendLayout();
             this.tableLayoutPanel7.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownHour)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMinute)).BeginInit();
             this.tableLayoutPanel6.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -179,8 +179,8 @@
             this.tableLayoutPanel5.ColumnCount = 2;
             this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel5.Controls.Add(this.checkBox1, 1, 0);
-            this.tableLayoutPanel5.Controls.Add(this.comboBox1, 0, 0);
+            this.tableLayoutPanel5.Controls.Add(this.checkBoxOwnPatients, 1, 0);
+            this.tableLayoutPanel5.Controls.Add(this.comboBoxPatients, 0, 0);
             this.tableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel5.Location = new System.Drawing.Point(59, 30);
             this.tableLayoutPanel5.Margin = new System.Windows.Forms.Padding(0);
@@ -190,28 +190,31 @@
             this.tableLayoutPanel5.Size = new System.Drawing.Size(355, 30);
             this.tableLayoutPanel5.TabIndex = 5;
             // 
-            // checkBox1
+            // checkBoxOwnPatients
             // 
-            this.checkBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.checkBoxOwnPatients.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(256, 3);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(96, 24);
-            this.checkBox1.TabIndex = 0;
-            this.checkBox1.Text = "Own patients";
-            this.checkBox1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBoxOwnPatients.AutoSize = true;
+            this.checkBoxOwnPatients.Checked = true;
+            this.checkBoxOwnPatients.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxOwnPatients.Location = new System.Drawing.Point(256, 3);
+            this.checkBoxOwnPatients.Name = "checkBoxOwnPatients";
+            this.checkBoxOwnPatients.Size = new System.Drawing.Size(96, 24);
+            this.checkBoxOwnPatients.TabIndex = 0;
+            this.checkBoxOwnPatients.Text = "Own patients";
+            this.checkBoxOwnPatients.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.checkBoxOwnPatients.UseVisualStyleBackColor = true;
+            this.checkBoxOwnPatients.CheckedChanged += new System.EventHandler(this.checkBoxOwnPatients_CheckedChanged);
             // 
-            // comboBox1
+            // comboBoxPatients
             // 
-            this.comboBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(3, 3);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(247, 23);
-            this.comboBox1.TabIndex = 1;
+            this.comboBoxPatients.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.comboBoxPatients.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxPatients.FormattingEnabled = true;
+            this.comboBoxPatients.Location = new System.Drawing.Point(3, 3);
+            this.comboBoxPatients.Name = "comboBoxPatients";
+            this.comboBoxPatients.Size = new System.Drawing.Size(247, 23);
+            this.comboBoxPatients.TabIndex = 1;
             // 
             // tableLayoutPanel7
             // 
@@ -219,9 +222,9 @@
             this.tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel7.Controls.Add(this.numericUpDown1, 1, 0);
-            this.tableLayoutPanel7.Controls.Add(this.numericUpDown2, 2, 0);
-            this.tableLayoutPanel7.Controls.Add(this.dateTimePicker1, 0, 0);
+            this.tableLayoutPanel7.Controls.Add(this.numericUpDownHour, 1, 0);
+            this.tableLayoutPanel7.Controls.Add(this.numericUpDownMinute, 2, 0);
+            this.tableLayoutPanel7.Controls.Add(this.dateTimePickerAppointmentDate, 0, 0);
             this.tableLayoutPanel7.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel7.Location = new System.Drawing.Point(59, 0);
             this.tableLayoutPanel7.Margin = new System.Windows.Forms.Padding(0);
@@ -231,46 +234,46 @@
             this.tableLayoutPanel7.Size = new System.Drawing.Size(355, 30);
             this.tableLayoutPanel7.TabIndex = 6;
             // 
-            // numericUpDown1
+            // numericUpDownHour
             // 
-            this.numericUpDown1.Location = new System.Drawing.Point(266, 3);
-            this.numericUpDown1.Maximum = new decimal(new int[] {
+            this.numericUpDownHour.Location = new System.Drawing.Point(266, 3);
+            this.numericUpDownHour.Maximum = new decimal(new int[] {
             23,
             0,
             0,
             0});
-            this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(40, 23);
-            this.numericUpDown1.TabIndex = 0;
-            this.numericUpDown1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.numericUpDownHour.Name = "numericUpDownHour";
+            this.numericUpDownHour.Size = new System.Drawing.Size(40, 23);
+            this.numericUpDownHour.TabIndex = 0;
+            this.numericUpDownHour.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
-            // numericUpDown2
+            // numericUpDownMinute
             // 
-            this.numericUpDown2.Location = new System.Drawing.Point(312, 3);
-            this.numericUpDown2.Maximum = new decimal(new int[] {
+            this.numericUpDownMinute.Location = new System.Drawing.Point(312, 3);
+            this.numericUpDownMinute.Maximum = new decimal(new int[] {
             59,
             0,
             0,
             0});
-            this.numericUpDown2.Name = "numericUpDown2";
-            this.numericUpDown2.Size = new System.Drawing.Size(40, 23);
-            this.numericUpDown2.TabIndex = 1;
-            this.numericUpDown2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.numericUpDownMinute.Name = "numericUpDownMinute";
+            this.numericUpDownMinute.Size = new System.Drawing.Size(40, 23);
+            this.numericUpDownMinute.TabIndex = 1;
+            this.numericUpDownMinute.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
-            // dateTimePicker1
+            // dateTimePickerAppointmentDate
             // 
-            this.dateTimePicker1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dateTimePicker1.Location = new System.Drawing.Point(3, 3);
-            this.dateTimePicker1.Name = "dateTimePicker1";
-            this.dateTimePicker1.Size = new System.Drawing.Size(257, 23);
-            this.dateTimePicker1.TabIndex = 2;
+            this.dateTimePickerAppointmentDate.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dateTimePickerAppointmentDate.Location = new System.Drawing.Point(3, 3);
+            this.dateTimePickerAppointmentDate.Name = "dateTimePickerAppointmentDate";
+            this.dateTimePickerAppointmentDate.Size = new System.Drawing.Size(257, 23);
+            this.dateTimePickerAppointmentDate.TabIndex = 2;
             // 
             // tableLayoutPanel6
             // 
             this.tableLayoutPanel6.ColumnCount = 1;
             this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel6.Controls.Add(this.label3, 0, 0);
-            this.tableLayoutPanel6.Controls.Add(this.richTextBox1, 0, 1);
+            this.tableLayoutPanel6.Controls.Add(this.richTextBoxNotes, 0, 1);
             this.tableLayoutPanel6.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel6.Location = new System.Drawing.Point(0, 60);
             this.tableLayoutPanel6.Margin = new System.Windows.Forms.Padding(0);
@@ -294,16 +297,16 @@
             this.label3.Text = "Note";
             this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // richTextBox1
+            // richTextBoxNotes
             // 
-            this.richTextBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.richTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.richTextBox1.Location = new System.Drawing.Point(10, 40);
-            this.richTextBox1.Margin = new System.Windows.Forms.Padding(10);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(394, 341);
-            this.richTextBox1.TabIndex = 6;
-            this.richTextBox1.Text = "";
+            this.richTextBoxNotes.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.richTextBoxNotes.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.richTextBoxNotes.Location = new System.Drawing.Point(10, 40);
+            this.richTextBoxNotes.Margin = new System.Windows.Forms.Padding(10);
+            this.richTextBoxNotes.Name = "richTextBoxNotes";
+            this.richTextBoxNotes.Size = new System.Drawing.Size(394, 341);
+            this.richTextBoxNotes.TabIndex = 6;
+            this.richTextBoxNotes.Text = "";
             // 
             // AppointmentEditorForm
             // 
@@ -327,8 +330,8 @@
             this.tableLayoutPanel5.ResumeLayout(false);
             this.tableLayoutPanel5.PerformLayout();
             this.tableLayoutPanel7.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownHour)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMinute)).EndInit();
             this.tableLayoutPanel6.ResumeLayout(false);
             this.tableLayoutPanel6.PerformLayout();
             this.ResumeLayout(false);
@@ -346,14 +349,14 @@
         private Label label1;
         private Label label2;
         private TableLayoutPanel tableLayoutPanel5;
-        private CheckBox checkBox1;
-        private ComboBox comboBox1;
+        private CheckBox checkBoxOwnPatients;
+        private ComboBox comboBoxPatients;
         private TableLayoutPanel tableLayoutPanel6;
         private Label label3;
-        private RichTextBox richTextBox1;
+        private RichTextBox richTextBoxNotes;
         private TableLayoutPanel tableLayoutPanel7;
-        private NumericUpDown numericUpDown1;
-        private NumericUpDown numericUpDown2;
-        private DateTimePicker dateTimePicker1;
+        private NumericUpDown numericUpDownHour;
+        private NumericUpDown numericUpDownMinute;
+        private DateTimePicker dateTimePickerAppointmentDate;
     }
 }
