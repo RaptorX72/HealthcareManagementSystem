@@ -12,6 +12,10 @@ namespace DesktopApplication {
             InitializeComponent();
             parentUC = parent;
             this.doctor = doctor;
+            RefreshLists();
+        }
+
+        private void RefreshLists() {
             List<Appointment> appointments = DBHandler.Appointment.GetAllAppointmentsByDoctor(this.doctor);
             appointments.Sort((x, y) => x.Date.CompareTo(y.Date));
 
@@ -36,6 +40,26 @@ namespace DesktopApplication {
         private void listBoxUpcomingAppointments_SelectedIndexChanged(object sender, EventArgs e) {
             int i = listBoxUpcomingAppointments.SelectedIndex;
             if (i >= upcomingAppointments.Count || i == -1) return;
+        }
+
+        private void buttonUpcomingAdd_Click(object sender, EventArgs e) {
+
+        }
+
+        private void buttonUpcomingEdit_Click(object sender, EventArgs e) {
+
+        }
+
+        private void buttonUpcomingDelete_Click(object sender, EventArgs e) {
+
+        }
+
+        private void buttonUpcomingRefresh_Click(object sender, EventArgs e) {
+
+        }
+
+        private void buttonPastRefresh_Click(object sender, EventArgs e) {
+
         }
     }
 }

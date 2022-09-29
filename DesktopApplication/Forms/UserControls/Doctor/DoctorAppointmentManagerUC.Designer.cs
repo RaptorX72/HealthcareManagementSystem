@@ -146,6 +146,7 @@
             this.buttonUpcomingAdd.TabIndex = 0;
             this.buttonUpcomingAdd.Text = "Add";
             this.buttonUpcomingAdd.UseVisualStyleBackColor = true;
+            this.buttonUpcomingAdd.Click += new System.EventHandler(this.buttonUpcomingAdd_Click);
             // 
             // buttonUpcomingEdit
             // 
@@ -158,6 +159,7 @@
             this.buttonUpcomingEdit.TabIndex = 1;
             this.buttonUpcomingEdit.Text = "Edit";
             this.buttonUpcomingEdit.UseVisualStyleBackColor = true;
+            this.buttonUpcomingEdit.Click += new System.EventHandler(this.buttonUpcomingEdit_Click);
             // 
             // buttonUpcomingDelete
             // 
@@ -170,6 +172,7 @@
             this.buttonUpcomingDelete.TabIndex = 2;
             this.buttonUpcomingDelete.Text = "Delete";
             this.buttonUpcomingDelete.UseVisualStyleBackColor = true;
+            this.buttonUpcomingDelete.Click += new System.EventHandler(this.buttonUpcomingDelete_Click);
             // 
             // buttonUpcomingRefresh
             // 
@@ -182,6 +185,7 @@
             this.buttonUpcomingRefresh.TabIndex = 3;
             this.buttonUpcomingRefresh.Text = "Refresh";
             this.buttonUpcomingRefresh.UseVisualStyleBackColor = true;
+            this.buttonUpcomingRefresh.Click += new System.EventHandler(this.buttonUpcomingRefresh_Click);
             // 
             // tabPage2
             // 
@@ -246,6 +250,7 @@
             this.buttonPastRefresh.TabIndex = 0;
             this.buttonPastRefresh.Text = "Refresh";
             this.buttonPastRefresh.UseVisualStyleBackColor = true;
+            this.buttonPastRefresh.Click += new System.EventHandler(this.buttonPastRefresh_Click);
             // 
             // groupBox1
             // 
